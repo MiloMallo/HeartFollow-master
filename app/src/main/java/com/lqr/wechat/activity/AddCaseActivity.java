@@ -18,9 +18,10 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 
 import com.lqr.wechat.DBManager;
-import com.lqr.wechat.model.Person;
 import com.lqr.wechat.R;
+import com.lqr.wechat.model.CaseRecount;
 import com.lqr.wechat.model.Contact;
+import com.lqr.wechat.model.Image;
 import com.lqr.wechat.model.UploadGoodsBean;
 import com.lqr.wechat.utils.Config;
 import com.lqr.wechat.utils.DbTOPxUtil;
@@ -36,8 +37,11 @@ import com.zzti.fengyongge.imagepicker.util.CommonUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -518,6 +522,12 @@ public class AddCaseActivity extends BaseActivity {
     public void click(View view) {
         switch (view.getId()) {
             case R.id.btnOk:
+                ArrayList<Image> images = new ArrayList<Image>();
+                Date date = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String dateNowStr = sdf.format(date);
+                String rand = getRandomString(4);
+                while(rand == "0000"){rand = getRandomString(4);}//生成不是全零的字符串
                 for(int j=0;j<4;j++) {
                     for (int i = 0; i < getImgUrl(j).size() - 1; i++) {
                         Bitmap bp = BitmapFactory.decodeFile(getImgUrl(j).get(i).getUrl());
@@ -526,9 +536,16 @@ public class AddCaseActivity extends BaseActivity {
                         //ContentValues cv = new ContentValues();
                         //cv.put("IMG_DATA",os.toByteArray());
                         //mgr.insert("IMGS",null,cv);
-                        mgr.addPicture(j,os.toByteArray());
+
+                        //userName + date + rand
+                        String imgId = mContact.getAccount() + j + dateNowStr + rand;
+                        Image image = new Image(imgId,os.toByteArray());
+                        images.add(image);
                     }
                 }
+                CaseRecount caseRecounts = new CaseRecount(mContact.getAccount(),dateNowStr,rand,null,null,null,null,null,null,null);
+                mgr.addCaseRecount(caseRecounts);
+                mgr.addImage(images);
                 break;
             case R.id.btnLoad:
                 imgView = (ImageView) findViewById(R.id.imgView);
@@ -539,7 +556,6 @@ public class AddCaseActivity extends BaseActivity {
                     imgView.setImageBitmap(bmp);
                 }
                 c.close();
-
                 break;
         }
     }
@@ -563,6 +579,14 @@ public class AddCaseActivity extends BaseActivity {
         } catch (Exception e) {
             return null;
         }
+    }
+    public static String getRandomString(int len) {
+        String t = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        String n = "";
+        for (int  r = 0; len > r; ++r){
+            n+=t.charAt(new Random().nextInt(t.length()));
+        }
+        return n;
     }
 
     @Override

@@ -7,7 +7,6 @@ import java.util.ArrayList;
  */
 
 public class Image {
-    public int _id;
     public String imgId;
     public byte[] img;
 

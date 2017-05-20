@@ -1,10 +1,15 @@
 package com.lqr.wechat.model;
 
+import java.sql.Date;
+
 /**
  * Created by Administrator on 2017-05-14.
  */
 
-public class CaseInfo {
+public class CaseRecount {
+    public int _id;
+    public String userAccount;
+    public String date;
     public String imgRand;
 
     public String historyRecount;
@@ -16,10 +21,12 @@ public class CaseInfo {
     public String imageRecount;
     public String medicationRecount;
 
-    public CaseInfo() {
+    public CaseRecount() {
     }
 
-    public CaseInfo(String imgRand,String historyRecount,String historyCurCase,String historyPastCase,String historySigns,String assayRecount,String imageRecount,String medicationRecount) {
+    public CaseRecount(String userAccount, String date, String imgRand, String historyRecount, String historyCurCase, String historyPastCase, String historySigns, String assayRecount, String imageRecount, String medicationRecount) {
+        this.userAccount = userAccount;
+        this.date = date;
         this.imgRand = imgRand;
         this.historyRecount = historyRecount;
         this.historyCurCase = historyCurCase;

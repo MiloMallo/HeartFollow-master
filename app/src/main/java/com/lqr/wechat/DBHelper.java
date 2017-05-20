@@ -20,17 +20,17 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG,"create table ----------------------------->");
         //db.execSQL("DROP TABLE IF EXISTS person");
-        db.execSQL("CREATE TABLE IF NOT EXISTS person" +
-                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,account VARCHAR, name VARCHAR, age INTEGER, sex VARCHAR,historyImgRand VARCHAR,arrayImgRand VARCHAR,imageImgRand VARCHAR,medicationImgRand VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS UserInfo" +
+                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,account VARCHAR, name VARCHAR, age INTEGER, sex VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS caseRecount" +
+                "(_id VARCHAR PRIMARY KEY AUTOINCREMENT,userAccount VARCHAR,date VARCHAR, imgRand VARCHAR, historyRecount VARCHAR, historyCurCase VARCHAR, historyPastCase VARCHAR, historySigns VARCHAR, assayRecount VARCHAR, imageRecount VARCHAR, medicationRecount VARCHAR)");
         db.execSQL("CREATE TABLE IF NOT EXISTS image" +
-                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,String imgId,img BLOB)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS caseInfo" +
-                "(imgRand VARCHAR PRIMARY KEY,historyRecount VARCHAR, historyCurCase VARCHAR, historyPastCase VARCHAR, historySigns VARCHAR, assayRecount VARCHAR, imageRecount VARCHAR, medicationRecount VARCHAR)");
+                "(imgId VARCHAR PRIMARY KEY,img BLOB)");
     }
 
     //如果DATABASE_VERSION值被改为2,系统发现现有数据库版本不同,即会调用onUpgrade
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
+        db.execSQL("ALTER TABLE UserInfo ADD COLUMN other STRING");
     }
 }

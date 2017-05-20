@@ -14,9 +14,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.lqr.wechat.model.CaseInfo;
+import com.lqr.wechat.model.CaseRecount;
 import com.lqr.wechat.model.Image;
-import com.lqr.wechat.model.Person;
+import com.lqr.wechat.model.UserInfo;
 
 public class DBManager {
     private DBHelper helper;
@@ -30,91 +30,71 @@ public class DBManager {
         db = helper.getWritableDatabase();
     }
 
-    /**
-     * add persons
-     * @param person
-     */
-    public void addPerson(Person person) {
+    public void addUser(UserInfo user) {
         db.beginTransaction();  //开始事务
         try {
-            Log.d(TAG,"create person table ----------------------------->");
-            db.execSQL("INSERT INTO person VALUES(null, ?, ?, ?,?,?,?,?,?)", new Object[]{person.account,person.name, person.sex, person.age,person.historyImgRand,person.arrayImgRand,person.imageImgRand,person.medicationImgRand});
+            Log.d(TAG,"create userInfo table ----------------------------->");
+            db.execSQL("INSERT INTO userInfo VALUES(null, ?, ?, ?,?,?,?,?,?)", new Object[]{user.account,user.userName, user.sex, user.age});
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
             db.endTransaction();    //结束事务
         }
     }
-    public void addImage(Image image){
+    public void addImage(List<Image> images){
         db.beginTransaction();  //开始事务
         try {
             Log.d(TAG,"create image table ----------------------------->");
-            db.execSQL("INSERT INTO image VALUES(null, ?, ?)", new Object[]{image.imgId,image.img});
+            for(Image image : images){
+                db.execSQL("INSERT INTO image VALUES(?, ?)", new Object[]{image.imgId,image.img});
+            }
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
             db.endTransaction();    //结束事务
         }
     }
-    public void addCaseInfo(CaseInfo caseInfo){
+    public void addCaseRecount(CaseRecount caseRecount){
         db.beginTransaction();  //开始事务
         try {
-            Log.d(TAG,"create image table ----------------------------->");
-            db.execSQL("INSERT INTO caseInfo VALUES(?,?,?,?,?,?,?,?)", new Object[]{caseInfo.imgRand,caseInfo.historyRecount,caseInfo.historyCurCase,caseInfo.historyPastCase,caseInfo.historySigns,caseInfo.assayRecount,caseInfo.imageRecount,caseInfo.medicationRecount});
+            Log.d(TAG,"create caseRecount table ----------------------------->");
+            db.execSQL("INSERT INTO caseRecount VALUES(null,?,?,?,?,?,?,?,?,?,?)", new Object[]{caseRecount.userAccount, caseRecount.date, caseRecount.imgRand, caseRecount.historyRecount, caseRecount.historyCurCase, caseRecount.historyPastCase, caseRecount.historySigns, caseRecount.assayRecount, caseRecount.imageRecount, caseRecount.medicationRecount});
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
             db.endTransaction();    //结束事务
         }
     }
 
-    /**
-     * update person's age
-     * @param person
-     */
-    public void updateAge(Person person) {
+
+    public void updateAge(CaseRecount caseRecount) {
         ContentValues cv = new ContentValues();
-        cv.put("age", person.age);
-        db.update("person", cv, "name = ?", new String[]{person.name});
+        cv.put("historyRecount", caseRecount.historyRecount);
+        db.update("person", cv, "userName = ?,date = ?,imgRand = ?", new String[]{caseRecount.userAccount,caseRecount.date,caseRecount.imgRand});
     }
 
-    /**
-     * delete old person
-     * @param person
-     */
-    public void deleteOldPerson(Person person) {
-        db.delete("person", "age >= ?", new String[]{String.valueOf(person.age)});
+    public void deleteImage(Image image) {
+        db.delete("image", "imgId = ?", new String[]{String.valueOf(image.imgId)});
     }
 
-    /**
-     * query all persons, return list
-     * @return List<Person>
-     */
-    public List<Person> query() {
-        ArrayList<Person> persons = new ArrayList<Person>();
+    public List<UserInfo> query() {
+        ArrayList<UserInfo> userInfos = new ArrayList<UserInfo>();
         Cursor c = queryTheCursor();
         while (c.moveToNext()) {
-            Person person = new Person();
-            person._id = c.getInt(c.getColumnIndex("_account"));
-            person.name = c.getString(c.getColumnIndex("name"));
-            person.sex = c.getString(c.getColumnIndex("sex"));
-            person.age = c.getInt(c.getColumnIndex("age"));
+            UserInfo userInfo = new UserInfo();
+            userInfo.account = c.getString(c.getColumnIndex("account"));
+            userInfo.userName = c.getString(c.getColumnIndex("userName"));
+            userInfo.sex = c.getString(c.getColumnIndex("sex"));
+            userInfo.age = c.getInt(c.getColumnIndex("age"));
 
-            persons.add(person);
+            userInfos.add(userInfo);
         }
         c.close();
-        return persons;
+        return userInfos;
     }
 
-    /**
-     * query all persons, return cursor
-     * @return  Cursor
-     */
     public Cursor queryTheCursor() {
-        Cursor c = db.rawQuery("SELECT * FROM person", null);
+        Cursor c = db.rawQuery("SELECT * FROM image", null);
         return c;
     }
 
-    /**
-     * close database
-     */
     public void closeDB() {
         db.close();
     }
