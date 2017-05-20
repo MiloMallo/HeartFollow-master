@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">心随访</string>
+
+    <string name="message">最近咨询</string>
+    <string name="contacts">我的患者</string>
+    <string name="discovery">随访计划</string>
+    <string name="me">我</string>
+</resources>
