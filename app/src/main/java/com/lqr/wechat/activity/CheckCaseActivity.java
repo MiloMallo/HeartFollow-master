@@ -2,6 +2,8 @@ package com.lqr.wechat.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import com.lqr.wechat.DBManager;
 import com.lqr.wechat.R;
 import com.lqr.wechat.model.Contact;
 import com.lqr.wechat.model.UploadGoodsBean;
@@ -46,6 +49,8 @@ public class CheckCaseActivity extends BaseActivity {
     private CheckCaseAdapter mCheckCaseAdapter = null;
     private Contact mContact;
     private ArrayList<ListItem> mDataList = null;
+
+    private DBManager mgr;
     @Override
     public void init() {
         mContact = (Contact) getIntent().getSerializableExtra("contact");
@@ -53,10 +58,34 @@ public class CheckCaseActivity extends BaseActivity {
             interrupt();
             return;
         }
+        //初始化DBManager
+        mgr = new DBManager(CheckCaseActivity.this);
+        Cursor c = mgr.queryCaseRecountCursor(mContact.getAccount());
+        while(c.moveToNext()){
+            ListItem listItem = new ListItem();
+            int nameColumnIndex = cur.getColumnIndex(People.NAME);
+            String name = cur.getString(nameColumnIndex);
+            listItem.date = c
+        }
+        Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
+        imgView.setImageBitmap(bmp);
         //初始化数据mDataList
+
+
+
+        imgView = (ImageView) findViewById(R.id.imgView);
+            Cursor c = mgr.queryTheCursor();
+            c.moveToLast();
+            if (c.isLast()) {
+                Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
+                imgView.setImageBitmap(bmp);
+            }
+            c.close();
     }
     private static class ListItem {
-        public String title;
+        public String date;
+        public ArrayList<byte[]> images;
+        public String AskedTitle;
         public Class<?> activity;
     }
     @Override

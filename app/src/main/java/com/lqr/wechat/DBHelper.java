@@ -19,12 +19,14 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG,"create table ----------------------------->");
-        //db.execSQL("DROP TABLE IF EXISTS person");
+        db.execSQL("DROP TABLE IF EXISTS UserInfo");
+        db.execSQL("DROP TABLE IF EXISTS CaseRecount");
+        db.execSQL("DROP TABLE IF EXISTS Image");
         db.execSQL("CREATE TABLE IF NOT EXISTS UserInfo" +
                 "(_id INTEGER PRIMARY KEY AUTOINCREMENT,account VARCHAR, name VARCHAR, age INTEGER, sex VARCHAR)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS caseRecount" +
-                "(_id VARCHAR PRIMARY KEY AUTOINCREMENT,userAccount VARCHAR,date VARCHAR, imgRand VARCHAR, historyRecount VARCHAR, historyCurCase VARCHAR, historyPastCase VARCHAR, historySigns VARCHAR, assayRecount VARCHAR, imageRecount VARCHAR, medicationRecount VARCHAR)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS image" +
+        db.execSQL("CREATE TABLE IF NOT EXISTS CaseRecount" +
+                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,userAccount VARCHAR,date VARCHAR, imgRand VARCHAR, historyRecount VARCHAR, historyCurCase VARCHAR, historyPastCase VARCHAR, historySigns VARCHAR, assayRecount VARCHAR, imageRecount VARCHAR, medicationRecount VARCHAR)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS Image" +
                 "(imgId VARCHAR PRIMARY KEY,img BLOB)");
     }
 

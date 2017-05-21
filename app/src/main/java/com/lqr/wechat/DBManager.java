@@ -34,7 +34,7 @@ public class DBManager {
         db.beginTransaction();  //开始事务
         try {
             Log.d(TAG,"create userInfo table ----------------------------->");
-            db.execSQL("INSERT INTO userInfo VALUES(null, ?, ?, ?,?,?,?,?,?)", new Object[]{user.account,user.userName, user.sex, user.age});
+            db.execSQL("INSERT INTO UserInfo VALUES(null, ?, ?, ?,?,?,?,?,?)", new Object[]{user.account,user.userName, user.sex, user.age});
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
             db.endTransaction();    //结束事务
@@ -45,7 +45,7 @@ public class DBManager {
         try {
             Log.d(TAG,"create image table ----------------------------->");
             for(Image image : images){
-                db.execSQL("INSERT INTO image VALUES(?, ?)", new Object[]{image.imgId,image.img});
+                db.execSQL("INSERT INTO Image VALUES(?, ?)", new Object[]{image.imgId,image.img});
             }
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
@@ -56,7 +56,7 @@ public class DBManager {
         db.beginTransaction();  //开始事务
         try {
             Log.d(TAG,"create caseRecount table ----------------------------->");
-            db.execSQL("INSERT INTO caseRecount VALUES(null,?,?,?,?,?,?,?,?,?,?)", new Object[]{caseRecount.userAccount, caseRecount.date, caseRecount.imgRand, caseRecount.historyRecount, caseRecount.historyCurCase, caseRecount.historyPastCase, caseRecount.historySigns, caseRecount.assayRecount, caseRecount.imageRecount, caseRecount.medicationRecount});
+            db.execSQL("INSERT INTO CaseRecount VALUES(null,?,?,?,?,?,?,?,?,?,?)", new Object[]{caseRecount.userAccount, caseRecount.date, caseRecount.imgRand, caseRecount.historyRecount, caseRecount.historyCurCase, caseRecount.historyPastCase, caseRecount.historySigns, caseRecount.assayRecount, caseRecount.imageRecount, caseRecount.medicationRecount});
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
             db.endTransaction();    //结束事务
@@ -67,16 +67,16 @@ public class DBManager {
     public void updateAge(CaseRecount caseRecount) {
         ContentValues cv = new ContentValues();
         cv.put("historyRecount", caseRecount.historyRecount);
-        db.update("person", cv, "userName = ?,date = ?,imgRand = ?", new String[]{caseRecount.userAccount,caseRecount.date,caseRecount.imgRand});
+        db.update("UserInfo", cv, "userAccount = ?,date = ?,imgRand = ?", new String[]{caseRecount.userAccount,caseRecount.date,caseRecount.imgRand});
     }
 
     public void deleteImage(Image image) {
-        db.delete("image", "imgId = ?", new String[]{String.valueOf(image.imgId)});
+        db.delete("Image", "imgId = ?", new String[]{String.valueOf(image.imgId)});
     }
 
     public List<UserInfo> query() {
         ArrayList<UserInfo> userInfos = new ArrayList<UserInfo>();
-        Cursor c = queryTheCursor();
+        Cursor c = queryUserInfoCursor();
         while (c.moveToNext()) {
             UserInfo userInfo = new UserInfo();
             userInfo.account = c.getString(c.getColumnIndex("account"));
@@ -90,8 +90,13 @@ public class DBManager {
         return userInfos;
     }
 
-    public Cursor queryTheCursor() {
-        Cursor c = db.rawQuery("SELECT * FROM image", null);
+    public Cursor queryImageCursor() {
+        Cursor c = db.rawQuery("SELECT * FROM Image", null);
+        return c;
+    }
+
+    public Cursor queryCaseRecountCursor(String userAccount) {
+        Cursor c = db.rawQuery("SELECT * FROM CaseRecount WHERE userAccount=? ORDER BY date ASC", new String[]{userAccount});
         return c;
     }
 

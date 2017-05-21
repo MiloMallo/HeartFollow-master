@@ -543,13 +543,13 @@ public class AddCaseActivity extends BaseActivity {
                         images.add(image);
                     }
                 }
-                CaseRecount caseRecounts = new CaseRecount(mContact.getAccount(),dateNowStr,rand,null,null,null,null,null,null,null);
-                mgr.addCaseRecount(caseRecounts);
+                CaseRecount caseRecount = new CaseRecount(mContact.getAccount(),dateNowStr,rand,null,null,null,null,null,null,null);
+                mgr.addCaseRecount(caseRecount);
                 mgr.addImage(images);
                 break;
             case R.id.btnLoad:
                 imgView = (ImageView) findViewById(R.id.imgView);
-                Cursor c = mgr.queryTheCursor();
+                Cursor c = mgr.queryImageCursor();
                 c.moveToLast();
                 if (c.isLast()) {
                     Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));

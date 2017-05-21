@@ -15,7 +15,7 @@
             android:background="#8A000000" />
 
         <TextView
-            android:id="@+id/check_case_time"
+            android:id="@+id/check_case_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
