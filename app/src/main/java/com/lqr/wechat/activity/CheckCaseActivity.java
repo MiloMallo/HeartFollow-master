@@ -58,33 +58,28 @@ public class CheckCaseActivity extends BaseActivity {
             interrupt();
             return;
         }
-        //初始化DBManager
-        mgr = new DBManager(CheckCaseActivity.this);
-        Cursor c = mgr.queryCaseRecountCursor(mContact.getAccount());
-        while(c.moveToNext()){
-            ListItem listItem = new ListItem();
-            int nameColumnIndex = cur.getColumnIndex(People.NAME);
-            String name = cur.getString(nameColumnIndex);
-            listItem.date = c
-        }
-        Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
-        imgView.setImageBitmap(bmp);
         //初始化数据mDataList
 
-
-
-        imgView = (ImageView) findViewById(R.id.imgView);
-            Cursor c = mgr.queryTheCursor();
-            c.moveToLast();
-            if (c.isLast()) {
-                Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
-                imgView.setImageBitmap(bmp);
+        //初始化DBManager
+        mgr = new DBManager(CheckCaseActivity.this);
+        Cursor cursor = mgr.queryCaseRecountCursor(mContact.getAccount());
+        while(cursor.moveToNext()){
+            ListItem listItem = new ListItem();
+            listItem.date = cursor.getString(cursor.getColumnIndex("date"));
+            for(int i=0;i<4;i++){
+                String imageId = mContact.getAccount()+listItem.date+i+cursor.getString(cursor.getColumnIndex("imgRand"));
+                Bitmap bmp = mgr.queryImageCursor(imageId);
+                if(bmp!=null){
+                    listItem.historyListImgs.add(bmp);
+                }
             }
-            c.close();
+        }
+        cursor.close();
     }
     private static class ListItem {
-        public String date;
-        public ArrayList<byte[]> images;
+        public String date = new String();
+        public ArrayList<Bitmap> historyListImgs = new ArrayList<Bitmap>();
+        public ArrayList<Bitmap> arrayListImgs  = new ArrayList<Bitmap>();;
         public String AskedTitle;
         public Class<?> activity;
     }
