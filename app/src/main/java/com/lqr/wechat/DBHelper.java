@@ -27,7 +27,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS CaseRecount" +
                 "(_id INTEGER PRIMARY KEY AUTOINCREMENT,userAccount VARCHAR,date VARCHAR, imgRand VARCHAR, historyRecount VARCHAR, historyCurCase VARCHAR, historyPastCase VARCHAR, historySigns VARCHAR, assayRecount VARCHAR, imageRecount VARCHAR, medicationRecount VARCHAR)");
         db.execSQL("CREATE TABLE IF NOT EXISTS Image" +
-                "(imgId VARCHAR PRIMARY KEY,img BLOB)");
+                "(_id INTEGER PRIMARY KEY AUTOINCREMENT,imgId VARCHAR,img BLOB)");
     }
 
     //如果DATABASE_VERSION值被改为2,系统发现现有数据库版本不同,即会调用onUpgrade

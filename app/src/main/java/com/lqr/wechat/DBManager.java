@@ -45,7 +45,7 @@ public class DBManager {
         try {
             Log.d(TAG,"create image table ----------------------------->");
             for(Image image : images){
-                db.execSQL("INSERT INTO Image VALUES(?, ?)", new Object[]{image.imgId,image.img});
+                db.execSQL("INSERT INTO Image VALUES(null, ?, ?)", new Object[]{image.imgId,image.img});
             }
             db.setTransactionSuccessful();  //设置事务成功完成
         } finally {
@@ -90,11 +90,19 @@ public class DBManager {
         return userInfos;
     }
 
-    public Cursor queryImageCursor() {
-        Cursor c = db.rawQuery("SELECT * FROM Image", null);
+    public Cursor queryUserInfoCursor() {
+        Cursor c = db.rawQuery("SELECT * FROM UserInfo", null);
         return c;
     }
 
+    public Cursor queryImageCursor(String imageId) {
+        Cursor c = db.rawQuery("SELECT * FROM Image WHERE imgId = ?", new String[]{imageId});
+        return c;
+    }
+    public Cursor queryAllImageCursor() {
+        Cursor c = db.rawQuery("SELECT * FROM Image", null);
+        return c;
+    }
     public Cursor queryCaseRecountCursor(String userAccount) {
         Cursor c = db.rawQuery("SELECT * FROM CaseRecount WHERE userAccount=? ORDER BY date ASC", new String[]{userAccount});
         return c;

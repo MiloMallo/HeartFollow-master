@@ -528,7 +528,7 @@ public class AddCaseActivity extends BaseActivity {
                 String dateNowStr = sdf.format(date);
                 String rand = getRandomString(4);
                 while(rand == "0000"){rand = getRandomString(4);}//生成不是全零的字符串
-                for(int j=0;j<4;j++) {
+                for(int j=1;j<=4;j++) {
                     for (int i = 0; i < getImgUrl(j).size() - 1; i++) {
                         Bitmap bp = BitmapFactory.decodeFile(getImgUrl(j).get(i).getUrl());
                         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -549,9 +549,10 @@ public class AddCaseActivity extends BaseActivity {
                 break;
             case R.id.btnLoad:
                 imgView = (ImageView) findViewById(R.id.imgView);
-                Cursor c = mgr.queryImageCursor();
+                Cursor c = mgr.queryAllImageCursor();
                 c.moveToLast();
                 if (c.isLast()) {
+                    //String myImg = c.getString(c.getColumnIndex("imgId"));
                     Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
                     imgView.setImageBitmap(bmp);
                 }
