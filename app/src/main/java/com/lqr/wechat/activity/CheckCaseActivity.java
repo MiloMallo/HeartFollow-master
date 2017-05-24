@@ -57,7 +57,8 @@ public class CheckCaseActivity extends BaseActivity {
     private ImageView add_IB;
     private LayoutInflater inflater;
     private int screen_widthOffset;
-    private MyGridView check_imgs_history;
+    private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
+
     GridImgHistoryAdapter gridImgsAdapter4history;
     private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
     @Override
@@ -121,7 +122,17 @@ public class CheckCaseActivity extends BaseActivity {
 
 
 
-
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true).cacheOnDisc(true).build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                getApplicationContext()).defaultDisplayImageOptions(
+                defaultOptions).build();
+        ImageLoader.getInstance().init(config);
+        Config.ScreenMap = Config.getScreenSize(this, this);
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        screen_widthOffset = (display.getWidth() - (3* DbTOPxUtil.dip2px(this, 2)))/4;
+        inflater = LayoutInflater.from(this);
         /*DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisc(true).build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -168,10 +179,9 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.tv_date.setText(listItem.date);
 
 
-            check_imgs_history = (MyGridView) findViewById(R.id.check_images_history);
             gridImgsAdapter4history = new GridImgHistoryAdapter();
-            check_imgs_history.setAdapter(gridImgsAdapter4history);
-            //img_uri4history.add(null);
+            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
+            img_uri4history.add(null);
             gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
@@ -187,11 +197,13 @@ public class CheckCaseActivity extends BaseActivity {
 
             private TextView tv_date;
             private ImageView iv_history;
+            private MyGridView check_imgs_history;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 tv_date = (TextView) itemView.findViewById(R.id.check_case_date);
                 iv_history = (ImageView) itemView.findViewById(R.id.add_images);
+                check_imgs_history = (MyGridView) itemView.findViewById(R.id.check_images_history);
 
                 tv_date.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -270,11 +282,11 @@ public class CheckCaseActivity extends BaseActivity {
                 add_IB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*Bundle bundle = new Bundle();
+                        Bundle bundle = new Bundle();
                         bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
-                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);*/
+                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
                     }
                 });
             }
@@ -286,5 +298,42 @@ public class CheckCaseActivity extends BaseActivity {
         }
     }
 
+    private ArrayList<UploadGoodsBean> getImgUrl(int channel){
+            return img_uri4history;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 0:
+                if (data != null) {
+                    List<String> paths = (List<String>) data.getExtras().getSerializable("photos");
+                    //int local_Channel = (int) data.getExtras().getSerializable("channel");
+                    int local_Channel = data.getIntExtra("channel", 0);
+                    if (getImgUrl(local_Channel).size() > 0) {
+
+                        getImgUrl(local_Channel).remove(getImgUrl(local_Channel).size() - 1);
+                    }
+
+                    for (int i = 0; i < paths.size(); i++) {
+                        getImgUrl(local_Channel).add(new UploadGoodsBean(paths.get(i), false));
+                        //上传参数
+                    }
+                    for (int i = 0; i < paths.size(); i++) {
+                        PhotoModel photoModel = new PhotoModel();
+                        photoModel.setOriginalPath(paths.get(i));
+                        photoModel.setChecked(true);
+                        single_photos.add(photoModel);
+                    }
+                    if (getImgUrl(local_Channel).size() < 9) {
+                        getImgUrl(local_Channel).add(null);
+                    }
+                    gridImgsAdapter4history.notifyDataSetChanged();
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
 }
