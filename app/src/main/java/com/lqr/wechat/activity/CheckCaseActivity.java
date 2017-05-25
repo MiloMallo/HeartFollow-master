@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,9 +38,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.lqr.wechat.R.id.add_IB;
-import static com.lqr.wechat.R.id.delete_IV;
-
 /**
  * Created by Administrator on 2017-04-08.
  */
@@ -58,11 +54,11 @@ public class CheckCaseActivity extends BaseActivity {
     private DBManager mgr;
 
 
-    //    private ImageView add_IB;
+    private ImageView add_IB;
     private LayoutInflater inflater;
     private int screen_widthOffset;
-    //!!!注释掉
-//    private MyGridView check_imgs_history;
+    private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
+
     GridImgHistoryAdapter gridImgsAdapter4history;
     private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
     @Override
@@ -126,7 +122,6 @@ public class CheckCaseActivity extends BaseActivity {
 
 
 
-
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisc(true).build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -158,11 +153,9 @@ public class CheckCaseActivity extends BaseActivity {
     private class CheckCaseAdapter extends RecyclerView.Adapter {
 
         private LayoutInflater mLayoutInflater;
-        private Context mContext;
         private ArrayList<ListItem> mDataList = new ArrayList<>();
 
         public CheckCaseAdapter(Context context) {
-            mContext = context;
             mLayoutInflater = LayoutInflater.from(context);
         }
 
@@ -185,11 +178,11 @@ public class CheckCaseActivity extends BaseActivity {
 
             viewHolder.tv_date.setText(listItem.date);
 
-//            check_imgs_history = (MyGridView) findViewById(R.id.check_images_history);
-            gridImgsAdapter4history = new GridImgHistoryAdapter(mContext);
+
+            gridImgsAdapter4history = new GridImgHistoryAdapter();
             viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
             img_uri4history.add(null);
-//            gridImgsAdapter4history.notifyDataSetChanged();
+            gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
                 viewHolder.iv_history.setImageBitmap(image);
@@ -227,12 +220,6 @@ public class CheckCaseActivity extends BaseActivity {
 
 
     class GridImgHistoryAdapter extends BaseAdapter implements ListAdapter {
-        private Context mContext;
-
-        public GridImgHistoryAdapter(Context context) {
-            mContext = context;
-        }
-
         @Override
         public int getCount() {
             return img_uri4history.size();
@@ -250,26 +237,15 @@ public class CheckCaseActivity extends BaseActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            if (convertView == null) {
-//                convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
-                convertView = View.inflate(mContext, R.layout.activity_addstory_img_item, null);
-                holder = new ViewHolder();
-                holder.add_IB = (ImageView) convertView.findViewById(add_IB);
-                holder.delete_IV = (ImageView) convertView.findViewById(delete_IV);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-//            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
-//            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
-//            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
-//            convertView.setLayoutParams(param);
+            convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
+            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
+            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
+            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
+            convertView.setLayoutParams(param);
             if (img_uri4history.get(position) == null) {
-                holder.delete_IV.setVisibility(View.GONE);
-//                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, holder.add_IB);
-                ImageLoader.getInstance().displayImage("http://i.imgur.com/rFLNqWI.jpg", holder.add_IB);
-                holder.add_IB.setOnClickListener(new View.OnClickListener() {
+                delete_IV.setVisibility(View.GONE);
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
+                add_IB.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View arg0) {
@@ -282,8 +258,8 @@ public class CheckCaseActivity extends BaseActivity {
                 });
 
             } else {
-                ImageLoader.getInstance().displayImage("file://" + img_uri4history.get(position).getUrl(), holder.add_IB);
-                holder.delete_IV.setOnClickListener(new View.OnClickListener() {
+                ImageLoader.getInstance().displayImage("file://" + img_uri4history.get(position).getUrl(), add_IB);
+                delete_IV.setOnClickListener(new View.OnClickListener() {
                     private boolean is_addNull;
                     @Override
                     public void onClick(View arg0) {
@@ -303,14 +279,14 @@ public class CheckCaseActivity extends BaseActivity {
                     }
                 });
 
-                holder.add_IB.setOnClickListener(new View.OnClickListener() {
+                add_IB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        /*Bundle bundle = new Bundle();
+                        Bundle bundle = new Bundle();
                         bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
-                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);*/
+                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
                     }
                 });
             }
@@ -322,5 +298,42 @@ public class CheckCaseActivity extends BaseActivity {
         }
     }
 
+    private ArrayList<UploadGoodsBean> getImgUrl(int channel){
+            return img_uri4history;
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case 0:
+                if (data != null) {
+                    List<String> paths = (List<String>) data.getExtras().getSerializable("photos");
+                    //int local_Channel = (int) data.getExtras().getSerializable("channel");
+                    int local_Channel = data.getIntExtra("channel", 0);
+                    if (getImgUrl(local_Channel).size() > 0) {
+
+                        getImgUrl(local_Channel).remove(getImgUrl(local_Channel).size() - 1);
+                    }
+
+                    for (int i = 0; i < paths.size(); i++) {
+                        getImgUrl(local_Channel).add(new UploadGoodsBean(paths.get(i), false));
+                        //上传参数
+                    }
+                    for (int i = 0; i < paths.size(); i++) {
+                        PhotoModel photoModel = new PhotoModel();
+                        photoModel.setOriginalPath(paths.get(i));
+                        photoModel.setChecked(true);
+                        single_photos.add(photoModel);
+                    }
+                    if (getImgUrl(local_Channel).size() < 9) {
+                        getImgUrl(local_Channel).add(null);
+                    }
+                    gridImgsAdapter4history.notifyDataSetChanged();
+                }
+                break;
+            default:
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
 }
