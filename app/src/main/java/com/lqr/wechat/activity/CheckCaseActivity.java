@@ -53,6 +53,7 @@ public class CheckCaseActivity extends BaseActivity {
 
     private DBManager mgr;
 
+    private int imgArrayCnt = 0;
 
     private ImageView add_IB;
     private LayoutInflater inflater;
@@ -60,7 +61,7 @@ public class CheckCaseActivity extends BaseActivity {
     private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
 
     GridImgHistoryAdapter gridImgsAdapter4history;
-    private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
+    private ArrayList<ArrayList<UploadGoodsBean>> img_uriArray = new ArrayList<ArrayList<UploadGoodsBean>>();
     @Override
     public void init() {
         mContact = (Contact) getIntent().getSerializableExtra("contact");
@@ -155,6 +156,7 @@ public class CheckCaseActivity extends BaseActivity {
         private LayoutInflater mLayoutInflater;
         private ArrayList<ListItem> mDataList = new ArrayList<>();
 
+        //private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
         public CheckCaseAdapter(Context context) {
             mLayoutInflater = LayoutInflater.from(context);
         }
@@ -179,10 +181,13 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.tv_date.setText(listItem.date);
 
 
-            gridImgsAdapter4history = new GridImgHistoryAdapter();
+            gridImgsAdapter4history = new GridImgHistoryAdapter(imgArrayCnt);
             viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
-            img_uri4history.add(null);
-            gridImgsAdapter4history.notifyDataSetChanged();
+            ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
+            img_uriItem.add(null);
+            img_uriArray.add(img_uriItem);
+            imgArrayCnt++;
+            //gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
                 viewHolder.iv_history.setImageBitmap(image);
@@ -196,13 +201,13 @@ public class CheckCaseActivity extends BaseActivity {
         private class ViewHolder extends RecyclerView.ViewHolder {
 
             private TextView tv_date;
-            private ImageView iv_history;
+            //private ImageView iv_history;
             private MyGridView check_imgs_history;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 tv_date = (TextView) itemView.findViewById(R.id.check_case_date);
-                iv_history = (ImageView) itemView.findViewById(R.id.add_images);
+                //iv_history = (ImageView) itemView.findViewById(R.id.add_images);
                 check_imgs_history = (MyGridView) itemView.findViewById(R.id.check_images_history);
 
                 tv_date.setOnClickListener(new View.OnClickListener() {
@@ -217,14 +222,15 @@ public class CheckCaseActivity extends BaseActivity {
         }
     }
 
-
-
     class GridImgHistoryAdapter extends BaseAdapter implements ListAdapter {
+        private int imgArrayCnt;
         @Override
         public int getCount() {
-            return img_uri4history.size();
+            return img_uriArray.get(imgArrayCnt).size();
         }
-
+        GridImgHistoryAdapter(int cnt){
+            this.imgArrayCnt = cnt;
+        }
         @Override
         public Object getItem(int position) {
             return null;
@@ -242,7 +248,7 @@ public class CheckCaseActivity extends BaseActivity {
             ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
             AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
             convertView.setLayoutParams(param);
-            if (img_uri4history.get(position) == null) {
+            if (img_uriArray.get(imgArrayCnt).get(position) == null) {
                 delete_IV.setVisibility(View.GONE);
                 ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
                 add_IB.setOnClickListener(new View.OnClickListener() {
@@ -251,28 +257,28 @@ public class CheckCaseActivity extends BaseActivity {
                     public void onClick(View arg0) {
                         Intent intent = new Intent(CheckCaseActivity.this, PhotoSelectorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra("limit", 9 - (img_uri4history.size() - 1));
+                        intent.putExtra("limit", 9 - (img_uriArray.get(imgArrayCnt).size() - 1));
                         intent.putExtra("channel",1);
                         startActivityForResult(intent, 0);
                     }
                 });
 
             } else {
-                ImageLoader.getInstance().displayImage("file://" + img_uri4history.get(position).getUrl(), add_IB);
+                ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgArrayCnt).get(position).getUrl(), add_IB);
                 delete_IV.setOnClickListener(new View.OnClickListener() {
                     private boolean is_addNull;
                     @Override
                     public void onClick(View arg0) {
                         is_addNull = true;
-                        String img_url = img_uri4history.remove(position).getUrl();
-                        for (int i = 0; i < img_uri4history.size(); i++) {
-                            if (img_uri4history.get(i) == null) {
+                        String img_url = img_uriArray.get(imgArrayCnt).remove(position).getUrl();
+                        for (int i = 0; i < img_uriArray.get(imgArrayCnt).size(); i++) {
+                            if (img_uriArray.get(imgArrayCnt).get(i) == null) {
                                 is_addNull = false;
                                 continue;
                             }
                         }
                         if (is_addNull) {
-                            img_uri4history.add(null);
+                            img_uriArray.get(imgArrayCnt).add(null);
                         }
 //						FileUtils.DeleteFolder(img_url);
                         gridImgsAdapter4history.notifyDataSetChanged();
@@ -299,7 +305,7 @@ public class CheckCaseActivity extends BaseActivity {
     }
 
     private ArrayList<UploadGoodsBean> getImgUrl(int channel){
-            return img_uri4history;
+            return img_uriArray.get(imgArrayCnt);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -336,4 +342,9 @@ public class CheckCaseActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        imgArrayCnt = 0;
+    }
 }
