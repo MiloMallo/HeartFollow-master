@@ -104,6 +104,7 @@ public class DBManager {
         return c;
     }
     public Cursor queryCaseRecountCursor(String userAccount) {
+        //Cursor c = db.rawQuery("SELECT * FROM CaseRecount", null);
         Cursor c = db.rawQuery("SELECT * FROM CaseRecount WHERE userAccount=? ORDER BY date ASC", new String[]{userAccount});
         return c;
     }

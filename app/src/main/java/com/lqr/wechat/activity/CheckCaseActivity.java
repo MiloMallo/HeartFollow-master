@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.lqr.wechat.R.id.add_IB;
+import static com.lqr.wechat.R.id.delete_IV;
+
 /**
  * Created by Administrator on 2017-04-08.
  */
@@ -54,10 +58,11 @@ public class CheckCaseActivity extends BaseActivity {
     private DBManager mgr;
 
 
-    private ImageView add_IB;
+    //    private ImageView add_IB;
     private LayoutInflater inflater;
     private int screen_widthOffset;
-    private MyGridView check_imgs_history;
+    //!!!注释掉
+//    private MyGridView check_imgs_history;
     GridImgHistoryAdapter gridImgsAdapter4history;
     private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
     @Override
@@ -122,6 +127,17 @@ public class CheckCaseActivity extends BaseActivity {
 
 
 
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+                .cacheInMemory(true).cacheOnDisc(true).build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                getApplicationContext()).defaultDisplayImageOptions(
+                defaultOptions).build();
+        ImageLoader.getInstance().init(config);
+        Config.ScreenMap = Config.getScreenSize(this, this);
+        WindowManager windowManager = getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        screen_widthOffset = (display.getWidth() - (3* DbTOPxUtil.dip2px(this, 2)))/4;
+        inflater = LayoutInflater.from(this);
         /*DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true).cacheOnDisc(true).build();
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -142,9 +158,11 @@ public class CheckCaseActivity extends BaseActivity {
     private class CheckCaseAdapter extends RecyclerView.Adapter {
 
         private LayoutInflater mLayoutInflater;
+        private Context mContext;
         private ArrayList<ListItem> mDataList = new ArrayList<>();
 
         public CheckCaseAdapter(Context context) {
+            mContext = context;
             mLayoutInflater = LayoutInflater.from(context);
         }
 
@@ -167,12 +185,11 @@ public class CheckCaseActivity extends BaseActivity {
 
             viewHolder.tv_date.setText(listItem.date);
 
-
-            check_imgs_history = (MyGridView) findViewById(R.id.check_images_history);
-            gridImgsAdapter4history = new GridImgHistoryAdapter();
-            check_imgs_history.setAdapter(gridImgsAdapter4history);
-            //img_uri4history.add(null);
-            gridImgsAdapter4history.notifyDataSetChanged();
+//            check_imgs_history = (MyGridView) findViewById(R.id.check_images_history);
+            gridImgsAdapter4history = new GridImgHistoryAdapter(mContext);
+            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
+            img_uri4history.add(null);
+//            gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
                 viewHolder.iv_history.setImageBitmap(image);
@@ -187,11 +204,13 @@ public class CheckCaseActivity extends BaseActivity {
 
             private TextView tv_date;
             private ImageView iv_history;
+            private MyGridView check_imgs_history;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 tv_date = (TextView) itemView.findViewById(R.id.check_case_date);
                 iv_history = (ImageView) itemView.findViewById(R.id.add_images);
+                check_imgs_history = (MyGridView) itemView.findViewById(R.id.check_images_history);
 
                 tv_date.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -208,6 +227,12 @@ public class CheckCaseActivity extends BaseActivity {
 
 
     class GridImgHistoryAdapter extends BaseAdapter implements ListAdapter {
+        private Context mContext;
+
+        public GridImgHistoryAdapter(Context context) {
+            mContext = context;
+        }
+
         @Override
         public int getCount() {
             return img_uri4history.size();
@@ -225,15 +250,26 @@ public class CheckCaseActivity extends BaseActivity {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
-            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
-            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
-            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
-            convertView.setLayoutParams(param);
+            ViewHolder holder = null;
+            if (convertView == null) {
+//                convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
+                convertView = View.inflate(mContext, R.layout.activity_addstory_img_item, null);
+                holder = new ViewHolder();
+                holder.add_IB = (ImageView) convertView.findViewById(add_IB);
+                holder.delete_IV = (ImageView) convertView.findViewById(delete_IV);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+//            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
+//            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
+//            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
+//            convertView.setLayoutParams(param);
             if (img_uri4history.get(position) == null) {
-                delete_IV.setVisibility(View.GONE);
-                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
-                add_IB.setOnClickListener(new View.OnClickListener() {
+                holder.delete_IV.setVisibility(View.GONE);
+//                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, holder.add_IB);
+                ImageLoader.getInstance().displayImage("http://i.imgur.com/rFLNqWI.jpg", holder.add_IB);
+                holder.add_IB.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View arg0) {
@@ -246,8 +282,8 @@ public class CheckCaseActivity extends BaseActivity {
                 });
 
             } else {
-                ImageLoader.getInstance().displayImage("file://" + img_uri4history.get(position).getUrl(), add_IB);
-                delete_IV.setOnClickListener(new View.OnClickListener() {
+                ImageLoader.getInstance().displayImage("file://" + img_uri4history.get(position).getUrl(), holder.add_IB);
+                holder.delete_IV.setOnClickListener(new View.OnClickListener() {
                     private boolean is_addNull;
                     @Override
                     public void onClick(View arg0) {
@@ -267,7 +303,7 @@ public class CheckCaseActivity extends BaseActivity {
                     }
                 });
 
-                add_IB.setOnClickListener(new View.OnClickListener() {
+                holder.add_IB.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         /*Bundle bundle = new Bundle();
