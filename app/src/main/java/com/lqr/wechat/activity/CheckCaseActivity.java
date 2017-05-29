@@ -155,9 +155,10 @@ public class CheckCaseActivity extends BaseActivity {
 
         private LayoutInflater mLayoutInflater;
         private ArrayList<ListItem> mDataList = new ArrayList<>();
-
+        public Context context;//上下文
         //private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
         public CheckCaseAdapter(Context context) {
+            this.context = context;
             mLayoutInflater = LayoutInflater.from(context);
         }
 
@@ -181,12 +182,14 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.tv_date.setText(listItem.date);
 
 
-            gridImgsAdapter4history = new GridImgHistoryAdapter(imgArrayCnt);
-            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
             ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
             img_uriItem.add(null);
             img_uriArray.add(img_uriItem);
-            imgArrayCnt++;
+
+            gridImgsAdapter4history = new GridImgHistoryAdapter(context,mDataList.get(0).historyListImgs);
+            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
+
+            //imgArrayCnt++;
             //gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
@@ -223,19 +226,22 @@ public class CheckCaseActivity extends BaseActivity {
     }
 
     class GridImgHistoryAdapter extends BaseAdapter implements ListAdapter {
-        private int imgArrayCnt;
+        public Context context;//上下文
+        public LayoutInflater mInflater;
+        private int imgCnt;
         @Override
         public int getCount() {
-            return img_uriArray.get(imgArrayCnt).size();
-        }
-        GridImgHistoryAdapter(int cnt){
-            this.imgArrayCnt = cnt;
+            return img_uriArray.get(imgCnt).size();
         }
         @Override
         public Object getItem(int position) {
             return null;
         }
 
+        public GridImgHistoryAdapter(Context context, int cnt) {
+            this.mInflater = LayoutInflater.from(context);
+            imgCnt=cnt;
+        }
         @Override
         public long getItemId(int position) {
             return position;
@@ -248,7 +254,7 @@ public class CheckCaseActivity extends BaseActivity {
             ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
             AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
             convertView.setLayoutParams(param);
-            if (img_uriArray.get(imgArrayCnt).get(position) == null) {
+            if (img_uriArray.get(imgCnt).get(position) == null) {
                 delete_IV.setVisibility(View.GONE);
                 ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
                 add_IB.setOnClickListener(new View.OnClickListener() {
@@ -257,28 +263,28 @@ public class CheckCaseActivity extends BaseActivity {
                     public void onClick(View arg0) {
                         Intent intent = new Intent(CheckCaseActivity.this, PhotoSelectorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra("limit", 9 - (img_uriArray.get(imgArrayCnt).size() - 1));
+                        intent.putExtra("limit", 9 - (img_uriArray.get(imgCnt).size() - 1));
                         intent.putExtra("channel",1);
                         startActivityForResult(intent, 0);
                     }
                 });
 
             } else {
-                ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgArrayCnt).get(position).getUrl(), add_IB);
+                ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgCnt).get(position).getUrl(), add_IB);
                 delete_IV.setOnClickListener(new View.OnClickListener() {
                     private boolean is_addNull;
                     @Override
                     public void onClick(View arg0) {
                         is_addNull = true;
-                        String img_url = img_uriArray.get(imgArrayCnt).remove(position).getUrl();
-                        for (int i = 0; i < img_uriArray.get(imgArrayCnt).size(); i++) {
-                            if (img_uriArray.get(imgArrayCnt).get(i) == null) {
+                        String img_url = img_uriArray.get(imgCnt).remove(position).getUrl();
+                        for (int i = 0; i < img_uriArray.get(imgCnt).size(); i++) {
+                            if (img_uriArray.get(imgCnt).get(i) == null) {
                                 is_addNull = false;
                                 continue;
                             }
                         }
                         if (is_addNull) {
-                            img_uriArray.get(imgArrayCnt).add(null);
+                            img_uriArray.get(imgCnt).add(null);
                         }
 //						FileUtils.DeleteFolder(img_url);
                         gridImgsAdapter4history.notifyDataSetChanged();
