@@ -119,7 +119,7 @@ public class BasePhotoPreviewActivity extends Activity implements ViewPager.OnPa
 	}
 
 	protected void updatePercent() {
-		tvPercent.setText((current + 1) + "/" + photos.size());
+		tvPercent.setText((current + 1));// + "/" + photos.size());
 	}
 
 	/** 图片点击事件回调 */

@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:id="@+id/idCheckCaseItem">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="fill_parent"
                   android:layout_height="40dp"
@@ -57,7 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="10dp" >
+            android:paddingBottom="10dp"
+            android:descendantFocusability="blocksDescendants">
             <com.lqr.wechat.view.MyGridView
                 android:id="@+id/check_images_history"
                 android:layout_width="fill_parent"

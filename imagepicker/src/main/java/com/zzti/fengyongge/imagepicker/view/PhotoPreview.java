@@ -72,10 +72,10 @@ public class PhotoPreview extends LinearLayout implements OnClickListener {
 		
 		if (is_save) {
 			save_bt.setVisibility(View.VISIBLE);
-			loadImage("file://" + photoModel.getOriginalPath());//photoModel.getBitmap()
+			loadImage("file:/" + photoModel.getOriginalPath());//photoModel.getBitmap()
 		} else {
 			save_bt.setVisibility(View.GONE);
-			loadImage("file://" + photoModel.getOriginalPath());//photoModel.getBitmap()
+			loadImage("file:/" + photoModel.getOriginalPath());//photoModel.getBitmap()
 		}
 
 	}
