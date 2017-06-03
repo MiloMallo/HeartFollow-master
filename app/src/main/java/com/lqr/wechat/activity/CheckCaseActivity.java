@@ -305,7 +305,7 @@ public class CheckCaseActivity extends BaseActivity {
                         photoModel.setChecked(true);
                         single_photos.add(photoModel);*/
 
-                        bundle.putSerializable("photos",(Serializable)single_photos);//imgArray.get(position)
+                        bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
                         CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
