@@ -80,8 +80,7 @@ public class CheckCaseActivity extends BaseActivity {
             for(int i=1;i<=4;i++){
                 String imageId = mContact.getAccount()+i+listItem.date+cursor.getString(cursor.getColumnIndex("imgRand"));
                 Cursor imgCursor = mgr.queryImageCursor(imageId);
-                if(imgCursor.getCount()!=0 && i==1){
-                    imgCursor.moveToLast();
+                while(imgCursor.moveToNext() && i==1){
                     Bitmap bmp = cursorToBmp(imgCursor, imgCursor.getColumnIndex("img"));
                     listItem.historyListImgs.add(bmp);
                 }
@@ -181,12 +180,21 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.tv_date.setText(listItem.date);
 
 
-            gridImgsAdapter4history = new GridImgHistoryAdapter(imgArrayCnt);
-            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
-            ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
+
+            /*ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
             img_uriItem.add(null);
-            img_uriArray.add(img_uriItem);
-            imgArrayCnt++;
+            img_uriArray.add(img_uriItem);*/
+
+            gridImgsAdapter4history = new GridImgHistoryAdapter(listItem.historyListImgs);
+            viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
+
+            /*View convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
+            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
+            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
+            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
+            convertView.setLayoutParams(param);
+            add_IB.setImageBitmap(listItem.historyListImgs.get(0));*/
+            //imgArrayCnt++;
             //gridImgsAdapter4history.notifyDataSetChanged();
 
             /*for(Bitmap image : listItem.historyListImgs){
@@ -223,13 +231,16 @@ public class CheckCaseActivity extends BaseActivity {
     }
 
     class GridImgHistoryAdapter extends BaseAdapter implements ListAdapter {
-        private int imgArrayCnt;
+        private ArrayList<Bitmap> imgArray = new ArrayList<Bitmap>();
         @Override
         public int getCount() {
-            return img_uriArray.get(imgArrayCnt).size();
+            return imgArray.size();
         }
-        GridImgHistoryAdapter(int cnt){
-            this.imgArrayCnt = cnt;
+        GridImgHistoryAdapter(ArrayList<Bitmap> imgArray){
+            this.imgArray = imgArray;
+/*            for(Bitmap image : imgArray){
+                add_IB.setImageBitmap(imgArray.get(0));
+            }*/
         }
         @Override
         public Object getItem(int position) {
@@ -248,7 +259,7 @@ public class CheckCaseActivity extends BaseActivity {
             ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
             AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
             convertView.setLayoutParams(param);
-            if (img_uriArray.get(imgArrayCnt).get(position) == null) {
+            if (imgArray.get(position) == null) {
                 delete_IV.setVisibility(View.GONE);
                 ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
                 add_IB.setOnClickListener(new View.OnClickListener() {
@@ -257,14 +268,14 @@ public class CheckCaseActivity extends BaseActivity {
                     public void onClick(View arg0) {
                         Intent intent = new Intent(CheckCaseActivity.this, PhotoSelectorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra("limit", 9 - (img_uriArray.get(imgArrayCnt).size() - 1));
+                        intent.putExtra("limit", 9 - (imgArray.size() - 1));
                         intent.putExtra("channel",1);
                         startActivityForResult(intent, 0);
                     }
                 });
 
             } else {
-                ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgArrayCnt).get(position).getUrl(), add_IB);
+                add_IB.setImageBitmap(imgArray.get(position));//ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgArrayCnt).get(position).getUrl(), add_IB);
                 delete_IV.setOnClickListener(new View.OnClickListener() {
                     private boolean is_addNull;
                     @Override
@@ -289,7 +300,12 @@ public class CheckCaseActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("photos",(Serializable)single_photos);
+                        /*PhotoModel photoModel = new PhotoModel();
+                        photoModel.setBitmap(imgArray.get(position));
+                        photoModel.setChecked(true);
+                        single_photos.add(photoModel);*/
+
+                        bundle.putSerializable("photos",(Serializable)single_photos);//imgArray.get(position)
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
                         CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);

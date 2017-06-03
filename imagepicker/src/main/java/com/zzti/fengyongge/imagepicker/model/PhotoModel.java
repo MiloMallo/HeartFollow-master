@@ -3,6 +3,8 @@
  * Project Name: zcj_android-V0.21
  */
 package com.zzti.fengyongge.imagepicker.model;
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 /**
@@ -13,7 +15,7 @@ public class PhotoModel implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String originalPath;
 	private boolean isChecked;
-
+	private Bitmap bitmap;
 	public PhotoModel(String originalPath, boolean isChecked) {
 		super();
 		this.originalPath = originalPath;
@@ -26,7 +28,12 @@ public class PhotoModel implements Serializable {
 
 	public PhotoModel() {
 	}
-
+	public void setBitmap(Bitmap bitmap){
+		this.bitmap = bitmap;
+	}
+	public Bitmap getBitmap(){
+		return bitmap;
+	}
 	public String getOriginalPath() {
 		return originalPath;
 	}
