@@ -61,6 +61,7 @@ public class PhotoSelectorActivity extends Activity implements SelectPhotoItem.o
 	private String path_name;
 	private int limit;
 	private int Channel;
+	private int Item;
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(android.os.Message msg) {
@@ -70,6 +71,7 @@ public class PhotoSelectorActivity extends Activity implements SelectPhotoItem.o
 			//bundle.putSerializable("channel", Channel);
 			data.putExtras(bundle);
 			data.putExtra("channel", Channel);
+			data.putExtra("item", Item);
 			setResult(RESULT_OK, data);
 			finish();
 		};
@@ -82,6 +84,7 @@ public class PhotoSelectorActivity extends Activity implements SelectPhotoItem.o
 		setContentView(R.layout.activity_photoselector);
 		limit = getIntent().getIntExtra("limit", 0);
 		Channel = getIntent().getIntExtra("channel", 0);
+		Item = getIntent().getIntExtra("item", 0);
 		DisplayImageOptions defaultDisplayImageOptions = new DisplayImageOptions.Builder() //
 				.considerExifParams(true) // 调整图片方向
 				.resetViewBeforeLoading(true) // 载入之前重置ImageView

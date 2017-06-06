@@ -538,7 +538,7 @@ public class AddCaseActivity extends BaseActivity {
                         //mgr.insert("IMGS",null,cv);
 
                         //userName + date + rand
-                        String imgId = mContact.getAccount() + j + dateNowStr + rand;
+                        String imgId = j+mContact.getAccount()+ dateNowStr + rand;
                         Image image = new Image(imgId,os.toByteArray());
                         images.add(image);
                     }

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.lqr.wechat.DBManager;
 import com.lqr.wechat.R;
 import com.lqr.wechat.model.Contact;
+import com.lqr.wechat.model.Image;
 import com.lqr.wechat.model.UploadGoodsBean;
 import com.lqr.wechat.utils.Config;
 import com.lqr.wechat.utils.DbTOPxUtil;
@@ -37,6 +38,7 @@ import com.zzti.fengyongge.imagepicker.model.PhotoModel;
 import com.zzti.fengyongge.imagepicker.util.CommonUtils;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -57,6 +59,7 @@ public class CheckCaseActivity extends BaseActivity {
     private CheckCaseAdapter mCheckCaseAdapter = null;
     private Contact mContact;
     private ArrayList<ListItem> mDataList = null;
+    private ArrayList<String> mImageId = null;
 
     private DBManager mgr;
 
@@ -79,14 +82,16 @@ public class CheckCaseActivity extends BaseActivity {
         }
         //初始化数据mDataList
         mDataList = new ArrayList<ListItem>();
+        mImageId  = new ArrayList<>();
         //初始化DBManager
         mgr = new DBManager(CheckCaseActivity.this);
         Cursor cursor = mgr.queryCaseRecountCursor(mContact.getAccount());
         while(cursor.moveToNext()){
             ListItem listItem = new ListItem();
             listItem.date = cursor.getString(cursor.getColumnIndex("date"));
+            String imageId = null;
             for(int i=1;i<=4;i++){
-                String imageId = mContact.getAccount()+i+listItem.date+cursor.getString(cursor.getColumnIndex("imgRand"));
+                imageId = i+mContact.getAccount()+listItem.date+cursor.getString(cursor.getColumnIndex("imgRand"));
                 Cursor imgCursor = mgr.queryImageCursor(imageId);
                 while(imgCursor.moveToNext() && i==1){
                     Bitmap bmp = cursorToBmp(imgCursor, imgCursor.getColumnIndex("img"));
@@ -94,6 +99,11 @@ public class CheckCaseActivity extends BaseActivity {
                 }
             }
             mDataList.add(listItem);
+            if(imageId == null){
+                mImageId.add("#"+mContact.getAccount()+listItem.date);
+            }else{
+                mImageId.add(imageId);
+            }
         }
         cursor.close();
     }
@@ -298,13 +308,16 @@ public class CheckCaseActivity extends BaseActivity {
             if (imgArray.get(position) == null) {
                 delete_IV.setVisibility(View.GONE);
                 ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
+                //添加
                 add_IB.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View arg0) {
+                        int pos = (int)((ViewGroup) arg0.getParent()).getTag();
                         Intent intent = new Intent(CheckCaseActivity.this, PhotoSelectorActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        intent.putExtra("limit", 9 - (imgArray.size() - 1));
+                        intent.putExtra("limit", 9 - (mDataList.get(pos).historyListImgs.size() - 1));
+                        intent.putExtra("item",pos);
                         intent.putExtra("channel",1);
                         startActivityForResult(intent, 0);
                     }
@@ -322,6 +335,7 @@ public class CheckCaseActivity extends BaseActivity {
                         //int pos = (int)arg0.getTag();
                         int pos = (int)((ViewGroup) arg0.getParent()).getTag();
                         mDataList.get(pos).historyListImgs.remove(position);
+                        mgr.deleteImage(mImageId.get(pos),position);
                         for (int i = 0; i < mDataList.get(pos).historyListImgs.size(); i++) {
                             if (mDataList.get(pos).historyListImgs.get(i) == null) {
                                 is_addNull = false;
@@ -350,7 +364,6 @@ public class CheckCaseActivity extends BaseActivity {
                         if(single_photos.size()==0) {
                             single_photos.add(photoModel);
                         }
-
                         bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
@@ -367,8 +380,11 @@ public class CheckCaseActivity extends BaseActivity {
         }
     }
 
-    private ArrayList<UploadGoodsBean> getImgUrl(int channel){
-            return img_uriArray.get(imgArrayCnt);
+    private ArrayList<Bitmap> getImgItem(int channel,int item){
+            //if(channel == 1){
+
+                return mDataList.get(item).historyListImgs;
+            //}
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -378,25 +394,27 @@ public class CheckCaseActivity extends BaseActivity {
                     List<String> paths = (List<String>) data.getExtras().getSerializable("photos");
                     //int local_Channel = (int) data.getExtras().getSerializable("channel");
                     int local_Channel = data.getIntExtra("channel", 0);
-                    if (getImgUrl(local_Channel).size() > 0) {
-
-                        getImgUrl(local_Channel).remove(getImgUrl(local_Channel).size() - 1);
+                    int local_item = data.getIntExtra("item", 0);
+                    if (getImgItem(local_Channel,local_item).size() > 0) {
+                        getImgItem(local_Channel,local_item).remove(getImgItem(local_Channel,local_item).size() - 1);
                     }
-
+                    List<Image> loadImage = new ArrayList<>();
                     for (int i = 0; i < paths.size(); i++) {
-                        getImgUrl(local_Channel).add(new UploadGoodsBean(paths.get(i), false));
-                        //上传参数
+                        getImgItem(local_Channel,local_item).add(BitmapFactory.decodeFile(paths.get(i)));
+                        ByteArrayOutputStream os = new ByteArrayOutputStream();
+                        String imgId;
+                        if(mImageId.get(local_item).charAt(0)=='#'){
+                            imgId = "" + local_Channel + mImageId.get(local_item).substring(1)+mgr.getRandomString(4);
+                        }else {
+                            imgId = "" + local_Channel + mImageId.get(local_item).substring(1);
+                        }
+                        BitmapFactory.decodeFile(paths.get(i)).compress(Bitmap.CompressFormat.JPEG, 100, os);
+                        Image image = new Image(imgId,os.toByteArray());
+                        loadImage.add(image);
                     }
-                    for (int i = 0; i < paths.size(); i++) {
-                        PhotoModel photoModel = new PhotoModel();
-                        photoModel.setOriginalPath(paths.get(i));
-                        photoModel.setChecked(true);
-                        single_photos.add(photoModel);
-                    }
-                    if (getImgUrl(local_Channel).size() < 9) {
-                        getImgUrl(local_Channel).add(null);
-                    }
-                    gridImgsAdapter4history.notifyDataSetChanged();
+                    mgr.addImage(loadImage);
+                    getImgItem(local_Channel,local_item).add(null);
+                    mCheckCaseAdapter.notifyDataSetChanged();
                 }
                 break;
             default:
