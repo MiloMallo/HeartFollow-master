@@ -37,12 +37,12 @@
                   android:gravity="center"
                   android:orientation="vertical">
         <TextView
-            android:id="@+id/check_case_cases"
+            android:id="@+id/check_case_history"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="left"
-            android:text="    病例"
+            android:text="    病史"
             android:textColor="#8a0919f5"
             android:background="#8a29f5de"
             android:textSize="20dp" />
@@ -93,6 +93,81 @@
 
             <TextView
                 android:id="@+id/check_case_askedInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        <View
+            android:layout_width="300dp"
+            android:layout_height="0.66dp"
+            android:background="#8A000000" />
+
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/check_case_assay"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="left"
+            android:text="    化验"
+            android:textColor="#8a0919f5"
+            android:background="#8a29f5de"
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/add_images_assay"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:scaleType="fitXY" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:descendantFocusability="blocksDescendants">
+            <com.lqr.wechat.view.MyGridView
+                android:id="@+id/check_images_assay"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:numColumns="4" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="300dp"
+            android:layout_height="0.66dp"
+            android:background="#8A000000" />
+
+        <LinearLayout
+            android:id="@+id/check_case_askedTitle_assay"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="      无"
+                android:textColor="@color/black0"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/check_case_askedInfo_assay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"

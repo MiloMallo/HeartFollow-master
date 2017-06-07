@@ -63,6 +63,8 @@ public class CheckCaseActivity extends BaseActivity {
 
     private DBManager mgr;
 
+    private Intent mIntent;
+
     private int imgArrayCnt = 0;
     private int g_position = 0;
 
@@ -72,6 +74,7 @@ public class CheckCaseActivity extends BaseActivity {
     private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
 
     GridImgHistoryAdapter gridImgsAdapter4history;
+    GridImgAssayAdapter gridImgsAdapter4assay;
     private ArrayList<ArrayList<UploadGoodsBean>> img_uriArray = new ArrayList<ArrayList<UploadGoodsBean>>();
     @Override
     public void init() {
@@ -93,9 +96,12 @@ public class CheckCaseActivity extends BaseActivity {
             for(int i=1;i<=4;i++){
                 imageId = i+mContact.getAccount()+listItem.date+cursor.getString(cursor.getColumnIndex("imgRand"));
                 Cursor imgCursor = mgr.queryImageCursor(imageId);
-                while(imgCursor.moveToNext() && i==1){
+                while(imgCursor.moveToNext()){
                     Bitmap bmp = cursorToBmp(imgCursor, imgCursor.getColumnIndex("img"));
-                    listItem.historyListImgs.add(bmp);
+                    if(i==1){listItem.historyListImgs.add(bmp);}
+                    if(i==2){listItem.assayListImgs.add(bmp);}
+                    //if(i==1){listItem.historyListImgs.add(bmp);}
+                    //if(i==1){listItem.historyListImgs.add(bmp);}
                 }
             }
             mDataList.add(listItem);
@@ -119,7 +125,8 @@ public class CheckCaseActivity extends BaseActivity {
     private static class ListItem {
         public String date = new String();
         public ArrayList<Bitmap> historyListImgs = new ArrayList<Bitmap>();
-        public ArrayList<Bitmap> arrayListImgs  = new ArrayList<Bitmap>();;
+        public ArrayList<Bitmap> assayListImgs  = new ArrayList<Bitmap>();
+        public String historyRecount;
         public String AskedTitle;
         public Class<?> activity;
     }
@@ -175,6 +182,7 @@ public class CheckCaseActivity extends BaseActivity {
         private LayoutInflater mLayoutInflater;
         private ArrayList<ListItem> mDataList = new ArrayList<>();
         private MyItemClickListener mItemClickListener;
+        private int l_position;
         //private ArrayList<UploadGoodsBean> img_uri4history = new ArrayList<UploadGoodsBean>();
         public CheckCaseAdapter(Context context,MyItemClickListener clickListener) {
             this.mLayoutInflater = LayoutInflater.from(context);
@@ -203,6 +211,7 @@ public class CheckCaseActivity extends BaseActivity {
 
             viewHolder.tv_date.setText(listItem.date);
 
+            l_position = position;
 
 
             /*ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
@@ -216,6 +225,13 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.check_imgs_history.setEnabled(false);
             viewHolder.check_imgs_history.setTag(position);
             viewHolder.check_imgs_history.setAdapter(gridImgsAdapter4history);
+
+            gridImgsAdapter4assay = new GridImgAssayAdapter(listItem.assayListImgs,position);
+            viewHolder.check_imgs_assay.setClickable(false);
+            viewHolder.check_imgs_assay.setPressed(false);
+            viewHolder.check_imgs_assay.setEnabled(false);
+            viewHolder.check_imgs_assay.setTag(position);
+            viewHolder.check_imgs_assay.setAdapter(gridImgsAdapter4assay);
 
             /*View convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
             add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
@@ -238,22 +254,29 @@ public class CheckCaseActivity extends BaseActivity {
         private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             private TextView tv_date;
+            private TextView tv_askedInfo;
             private MyItemClickListener mListener;
             private MyGridView check_imgs_history;
+            private MyGridView check_imgs_assay;
 
             public ViewHolder(View itemView,MyItemClickListener listener) {
                 super(itemView);
-
-                tv_date = (TextView) itemView.findViewById(R.id.check_case_date);
-                //iv_history = (ImageView) itemView.findViewById(R.id.add_images);
-                check_imgs_history = (MyGridView) itemView.findViewById(R.id.check_images_history);
                 itemView.setOnClickListener(this);
                 this.mListener = listener;
 
-                tv_date.setOnClickListener(new View.OnClickListener() {
+                check_imgs_history = (MyGridView) itemView.findViewById(R.id.check_images_history);
+                check_imgs_assay = (MyGridView) itemView.findViewById(R.id.check_images_assay);
+
+
+                tv_date = (TextView) itemView.findViewById(R.id.check_case_date);
+                tv_askedInfo = (TextView) itemView.findViewById(R.id.check_case_askedInfo);
+                tv_askedInfo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
+                        String textBody = mDataList.get(l_position).historyRecount;
+                        mIntent.putExtra("textBody", textBody);
+                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_ALIAS);
                        /* ListItem listItem = mDataList.get(RecyclerViewUtils.getAdapterPosition(mRecyclerView, ViewHolder.this));
                         startActivity(new Intent(CheckCaseActivity.this, listItem.activity));*/
                     }
@@ -335,7 +358,8 @@ public class CheckCaseActivity extends BaseActivity {
                         //int pos = (int)arg0.getTag();
                         int pos = (int)((ViewGroup) arg0.getParent()).getTag();
                         mDataList.get(pos).historyListImgs.remove(position);
-                        mgr.deleteImage(mImageId.get(pos),position);
+                        String imgId = "1" +mImageId.get(pos).substring(1);
+                        mgr.deleteImage(imgId,position);
                         for (int i = 0; i < mDataList.get(pos).historyListImgs.size(); i++) {
                             if (mDataList.get(pos).historyListImgs.get(i) == null) {
                                 is_addNull = false;
@@ -379,12 +403,121 @@ public class CheckCaseActivity extends BaseActivity {
             ImageView delete_IV;
         }
     }
+//--------------------assay-------------------------------------------------------
+    class GridImgAssayAdapter extends BaseAdapter implements ListAdapter {
+        private ArrayList<Bitmap> imgArray = new ArrayList<Bitmap>();
+        private int l_position=0;
+        @Override
+        public int getCount() {
+            return imgArray.size();
+        }
+        GridImgAssayAdapter(ArrayList<Bitmap> imgArray,int position){
+            this.imgArray = imgArray;
+            if(this.imgArray.isEmpty() || this.imgArray.get(this.imgArray.size()-1)!=null){
+                this.imgArray.add(null);
+            }
+            this.l_position = position;
+/*            for(Bitmap image : imgArray){
+                add_IB.setImageBitmap(imgArray.get(0));
+            }*/
+        }
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
+            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
+            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
+            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
+            convertView.setLayoutParams(param);
+            if (imgArray.get(position) == null) {
+                delete_IV.setVisibility(View.GONE);
+                ImageLoader.getInstance().displayImage("drawable://" + R.drawable.iv_add_the_pic, add_IB);
+                //添加
+                add_IB.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View arg0) {
+                        int pos = (int)((ViewGroup) arg0.getParent()).getTag();
+                        Intent intent = new Intent(CheckCaseActivity.this, PhotoSelectorActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        intent.putExtra("limit", 9 - (mDataList.get(pos).assayListImgs.size() - 1));
+                        intent.putExtra("item",pos);
+                        intent.putExtra("channel",2);
+                        startActivityForResult(intent, 0);
+                    }
+                });
+
+            } else {
+                add_IB.setImageBitmap(imgArray.get(position));//ImageLoader.getInstance().displayImage("file://" + img_uriArray.get(imgArrayCnt).get(position).getUrl(), add_IB);
+                //删除
+                delete_IV.setOnClickListener(new View.OnClickListener() {
+                    private boolean is_addNull;
+                    @Override
+                    public void onClick(View arg0) {
+                        is_addNull = true;
+                        //imgArray.remove(position);
+                        //int pos = (int)arg0.getTag();
+                        int pos = (int)((ViewGroup) arg0.getParent()).getTag();
+                        mDataList.get(pos).assayListImgs.remove(position);
+                        String imgId = "2" +mImageId.get(pos).substring(1);
+                        mgr.deleteImage(imgId,position);
+                        for (int i = 0; i < mDataList.get(pos).assayListImgs.size(); i++) {
+                            if (mDataList.get(pos).assayListImgs.get(i) == null) {
+                                is_addNull = false;
+                                continue;
+                            }
+                        }
+                        if (is_addNull) {
+                            mDataList.get(pos).assayListImgs.add(null);
+                        }
+//						FileUtils.DeleteFolder(img_url);
+                        //gridImgsAdapter4history.notifyDataSetChanged();
+                        mCheckCaseAdapter.notifyDataSetChanged();
+                    }
+                });
+                //预览
+                add_IB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int pos = (int)((ViewGroup) v.getParent()).getTag();
+                        Bundle bundle = new Bundle();
+                        PhotoModel photoModel = new PhotoModel();
+                        //saveBitmapFile(mDataList.get(pos).historyListImgs.get(position));
+                        //Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), mDataList.get(pos).historyListImgs.get(position), null,null));
+                        photoModel.setOriginalPath(saveBitmapFile(mDataList.get(pos).assayListImgs.get(position)));
+                        photoModel.setChecked(true);
+                        if(single_photos.size()==0) {
+                            single_photos.add(photoModel);
+                        }
+                        bundle.putSerializable("photos",(Serializable)single_photos);
+                        bundle.putInt("position", position);
+                        bundle.putString("save","save");
+                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
+                    }
+                });
+            }
+            convertView.setTag(l_position);
+            return convertView;
+        }
+        class ViewHolder {
+            ImageView add_IB;
+            ImageView delete_IV;
+        }
+    }
 
     private ArrayList<Bitmap> getImgItem(int channel,int item){
-            //if(channel == 1){
-
-                return mDataList.get(item).historyListImgs;
-            //}
+            if(channel == 1){return mDataList.get(item).historyListImgs;}
+            else if(channel == 2){return mDataList.get(item).assayListImgs;}
+            return null;
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

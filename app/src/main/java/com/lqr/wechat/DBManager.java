@@ -56,9 +56,10 @@ public class DBManager {
     }
     public void deleteImage(String imageId,int pos) {
         //db.execSQL("DELETE FROM Image WHERE imgId=? ORDER BY _id LIMIT ?,1", new Object[]{imageId,pos});
-        //db.execSQL("DELETE FROM Image WHERE _id IN (SELECT _id FROM Image WHERE imgId=? ORDER BY _id LIMIT ?,1)", new Object[]{imageId,pos});
-        db.delete("Image", "imgId = ?", new String[]{imageId});
-        //db.execSQL("DELETE FROM Image WHERE imgId = ?", new String[]{imageId});
+        db.execSQL("DELETE FROM Image WHERE _id IN (SELECT _id FROM Image WHERE imgId=? ORDER BY _id LIMIT ?,1)", new Object[]{imageId,pos});
+        //db.delete("Image", "imgId = ?", new String[]{imageId});
+        //db.execSQL("DELETE FROM Image WHERE imgId = ?", new Object[]{imageId});
+
     }
     public void addCaseRecount(CaseRecount caseRecount){
         db.beginTransaction();  //开始事务
