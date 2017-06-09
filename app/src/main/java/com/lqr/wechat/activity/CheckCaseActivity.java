@@ -277,7 +277,7 @@ public class CheckCaseActivity extends BaseActivity {
                         mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
                         String textBody = mDataList.get(l_position).historyRecount;
                         mIntent.putExtra("textBody", textBody);
-                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_ALIAS);
+                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
                        /* ListItem listItem = mDataList.get(RecyclerViewUtils.getAdapterPosition(mRecyclerView, ViewHolder.this));
                         startActivity(new Intent(CheckCaseActivity.this, listItem.activity));*/
                     }

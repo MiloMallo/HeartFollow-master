@@ -24,6 +24,7 @@ import com.lqr.wechat.R;
         import butterknife.OnClick;
 
 public class EditCheckCase extends BaseActivity {
+    public static final int REQ_CHANGE_EDIT_TEXT = 102;
     private  EditText mEditText;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;

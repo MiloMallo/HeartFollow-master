@@ -135,6 +135,11 @@
             android:name=".activity.PreviewActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".activity.EditCheckCase"
+            android:screenOrientation="portrait">
+        </activity>
+
 
         <!--会话聊天-->
         <activity
