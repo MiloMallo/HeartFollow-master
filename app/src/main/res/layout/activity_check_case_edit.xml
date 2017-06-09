@@ -6,7 +6,7 @@
     <EditText
         android:id="@+id/check_case_text"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="400dp"
         android:background="@null"
         android:hint="请输入内容"
         android:textColorHint="#888888"

@@ -276,7 +276,9 @@ public class CheckCaseActivity extends BaseActivity {
                     public void onClick(View v) {
                         mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
                         String textBody = mDataList.get(l_position).historyRecount;
+                        mIntent.putExtra("textType",1 );
                         mIntent.putExtra("textBody", textBody);
+                        mIntent.putExtra("position", l_position);
                         startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
                        /* ListItem listItem = mDataList.get(RecyclerViewUtils.getAdapterPosition(mRecyclerView, ViewHolder.this));
                         startActivity(new Intent(CheckCaseActivity.this, listItem.activity));*/
@@ -528,7 +530,8 @@ public class CheckCaseActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case 0:
-                if (data != null) {
+                int mTextType = data.getIntExtra("mTextType", 0);
+                if (data != null && mTextType==0) {
                     List<String> paths = (List<String>) data.getExtras().getSerializable("photos");
                     //int local_Channel = (int) data.getExtras().getSerializable("channel");
                     int local_Channel = data.getIntExtra("channel", 0);
@@ -553,6 +556,16 @@ public class CheckCaseActivity extends BaseActivity {
                     mgr.addImage(loadImage);
                     getImgItem(local_Channel,local_item).add(null);
                     mCheckCaseAdapter.notifyDataSetChanged();
+                }else{
+                    switch(mTextType){
+                        case 1:
+                            int mPosition = data.getIntExtra("mPosition", 0);
+                            String mTextBody = data.getStringExtra("mTextBody");
+
+                            break;
+                        case 2:
+                            break;
+                    }
                 }
                 break;
             default:

@@ -1,5 +1,8 @@
 package com.lqr.wechat.activity;
 
+import android.content.Intent;
+import android.database.Cursor;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
         import android.text.TextUtils;
         import android.view.MenuItem;
@@ -9,15 +12,18 @@ import android.support.v7.widget.Toolbar;
         import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.lqr.wechat.DBManager;
 import com.lqr.wechat.R;
         import com.lqr.wechat.model.Contact;
         import com.lqr.wechat.nimsdk.NimFriendSDK;
         import com.lqr.wechat.utils.UIUtils;
         import com.netease.nimlib.sdk.RequestCallback;
         import com.netease.nimlib.sdk.friend.constant.FriendFieldEnum;
+import com.zzti.fengyongge.imagepicker.model.PhotoModel;
 
-        import java.util.HashMap;
-        import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
         import butterknife.ButterKnife;
         import butterknife.InjectView;
@@ -26,6 +32,10 @@ import com.lqr.wechat.R;
 public class EditCheckCase extends BaseActivity {
     public static final int REQ_CHANGE_EDIT_TEXT = 102;
     private  EditText mEditText;
+    private int mTextType;
+    private int mPosition;
+    private String mTextBody;
+
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
 
@@ -44,10 +54,14 @@ public class EditCheckCase extends BaseActivity {
     @Override
     public void init() {
         mEditText = (EditText)findViewById(R.id.check_case_text);
+        mTextType = getIntent().getIntExtra("textType",0);
+        mPosition = getIntent().getIntExtra("position", 0);
+        mTextBody = getIntent().getStringExtra("textBody");
+        mEditText.setText(mTextBody);
     }
     @Override
     public void initView() {
-        setContentView(R.layout.activity_checkcase_preview);
+        setContentView(R.layout.activity_check_case_edit);
         ButterKnife.inject(this);
         initToolbar();
     }
@@ -71,10 +85,15 @@ public class EditCheckCase extends BaseActivity {
 
 
     private void saveAliasChange() {
-        String alias = mEditText.getText().toString().trim();
+        String editText = mEditText.getText().toString();
         showWaitingDialog("请稍等");
-        Map<FriendFieldEnum, Object> map = new HashMap<>(1);
-        map.put(FriendFieldEnum.ALIAS, alias);
+
+        Intent data = new Intent();
+        data.putExtra("textType", mTextType);
+        data.putExtra("textBody", mTextBody);
+        data.putExtra("position", mPosition);
+        setResult(RESULT_OK, data);
+        finish();
         /*NimFriendSDK.updateFriendFields(mContact.getAccount(), map, new RequestCallback<Void>() {
             @Override
             public void onSuccess(Void param) {
