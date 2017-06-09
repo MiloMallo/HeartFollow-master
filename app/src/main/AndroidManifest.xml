@@ -125,8 +125,14 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
+
         <activity
             android:name=".activity.OtherLoginActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name=".activity.PreviewActivity"
             android:screenOrientation="portrait">
         </activity>
 

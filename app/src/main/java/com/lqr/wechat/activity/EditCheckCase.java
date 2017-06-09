@@ -1,14 +1,15 @@
 package com.lqr.wechat.activity;
 
-        import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.Toolbar;
         import android.text.TextUtils;
         import android.view.MenuItem;
         import android.view.View;
         import android.widget.Button;
         import android.widget.EditText;
         import android.widget.ImageButton;
+import android.widget.ImageView;
 
-        import com.lqr.wechat.R;
+import com.lqr.wechat.R;
         import com.lqr.wechat.model.Contact;
         import com.lqr.wechat.nimsdk.NimFriendSDK;
         import com.lqr.wechat.utils.UIUtils;
@@ -23,36 +24,12 @@ package com.lqr.wechat.activity;
         import butterknife.OnClick;
 
 public class EditCheckCase extends BaseActivity {
-
-    private String alias;
-    private Contact mContact;
-
-    public static final int REQ_CHANGE_ALIAS = 101;
-
+    private  EditText mEditText;
     @InjectView(R.id.toolbar)
     Toolbar mToolbar;
+
     @InjectView(R.id.btnOk)
     Button mBtnOk;
-    @InjectView(R.id.etAlias)
-    EditText mEtAlias;
-    @InjectView(R.id.ibClearAlias)
-    ImageButton mIbClearAlias;
-    @InjectView(R.id.etTag)
-    EditText mEtTag;
-    @InjectView(R.id.ibClearTag)
-    ImageButton mIbClearTag;
-    @InjectView(R.id.etPhone)
-    EditText mEtPhone;
-    @InjectView(R.id.ibClearPhone)
-    ImageButton mIbClearPhone;
-    @InjectView(R.id.etDesc)
-    EditText mEtDesc;
-    @InjectView(R.id.ibClearDesc)
-    ImageButton mIbClearDesc;
-    @InjectView(R.id.etPicture)
-    EditText mEtPicture;
-    @InjectView(R.id.ibClearPicture)
-    ImageButton mIbClearPicture;
 
     @OnClick({R.id.btnOk})
     public void click(View view) {
@@ -65,71 +42,21 @@ public class EditCheckCase extends BaseActivity {
 
     @Override
     public void init() {
-        mContact = (Contact) getIntent().getSerializableExtra("contact");
-        if (mContact == null) {
-            interrupt();
-            return;
-        }
+        mEditText = (EditText)findViewById(R.id.check_case_text);
     }
-
     @Override
     public void initView() {
-        setContentView(R.layout.activity_alias);
+        setContentView(R.layout.activity_checkcase_preview);
         ButterKnife.inject(this);
         initToolbar();
-
-        String alias = mContact.getFriend().getAlias();
-        if (!TextUtils.isEmpty(alias)) {
-            mEtAlias.setText(alias);
-            mEtAlias.setSelection(alias.length());
-        }
     }
-
-    @Override
-    public void initData() {
-        alias = mContact.getFriend().getAlias();
+    private void initToolbar() {
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("编辑文本");
+        mToolbar.setNavigationIcon(R.mipmap.ic_back);
+        mBtnOk.setVisibility(View.VISIBLE);
     }
-
-    @Override
-    public void initListener() {
-        mEtAlias.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    mIbClearAlias.setVisibility(View.VISIBLE);
-                } else {
-                    mIbClearAlias.setVisibility(View.GONE);
-                }
-            }
-        });
-        mIbClearAlias.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mEtAlias.setText("");
-            }
-        });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!alias.equals(mEtAlias.getText().toString().trim())) {
-            showMaterialDialog("", "保存本次编辑?", "保存", "不保存", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    saveAliasChange();
-                    hideMaterialDialog();
-                }
-            }, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    hideMaterialDialog();
-                }
-            });
-            return;
-        }
-        super.onBackPressed();
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -140,20 +67,14 @@ public class EditCheckCase extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initToolbar() {
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("备注信息");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mToolbar.setNavigationIcon(R.mipmap.ic_back);
-        mBtnOk.setVisibility(View.VISIBLE);
-    }
+
 
     private void saveAliasChange() {
-        String alias = mEtAlias.getText().toString().trim();
+        String alias = mEditText.getText().toString().trim();
         showWaitingDialog("请稍等");
         Map<FriendFieldEnum, Object> map = new HashMap<>(1);
         map.put(FriendFieldEnum.ALIAS, alias);
-        NimFriendSDK.updateFriendFields(mContact.getAccount(), map, new RequestCallback<Void>() {
+        /*NimFriendSDK.updateFriendFields(mContact.getAccount(), map, new RequestCallback<Void>() {
             @Override
             public void onSuccess(Void param) {
                 UIUtils.showToast("修改备注信息成功");
@@ -173,7 +94,7 @@ public class EditCheckCase extends BaseActivity {
                 exception.printStackTrace();
                 hideWaitingDialog();
             }
-        });
+        });*/
     }
 }
 

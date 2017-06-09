@@ -67,8 +67,6 @@ public class ContactsFragment extends BaseFragment {
     //联系人列表最上条目
     LinearLayout mLlNewFriend;
     LinearLayout mLlGroupCheat;
-    LinearLayout mLlTag;
-    LinearLayout mLlOffical;
     private View mVNewFriendUnread;
     private View mVGroupCheatUnread;
 
@@ -173,19 +171,6 @@ public class ContactsFragment extends BaseFragment {
             }
         });
 
-        mLlTag.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().startActivity(new Intent(getActivity(), AllTagActvitiy.class));
-            }
-        });
-        mLlOffical.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UIUtils.showToast("公众号");
-            }
-        });
-
     }
 
     @Override
@@ -200,8 +185,6 @@ public class ContactsFragment extends BaseFragment {
 
         mLlNewFriend = (LinearLayout) mHeaderView.findViewById(R.id.llNewFriend);
         mLlGroupCheat = (LinearLayout) mHeaderView.findViewById(R.id.llGroupCheat);
-        mLlTag = (LinearLayout) mHeaderView.findViewById(R.id.llTag);
-        mLlOffical = (LinearLayout) mHeaderView.findViewById(R.id.llOffical);
 
         mVNewFriendUnread = mHeaderView.findViewById(R.id.vNewFriendUnread);
         mVGroupCheatUnread = mHeaderView.findViewById(R.id.vGroupCheatUnread);

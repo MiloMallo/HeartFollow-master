@@ -73,6 +73,7 @@ public class CheckCaseActivity extends BaseActivity {
     private int screen_widthOffset;
     private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
 
+    public volatile static Bitmap g_previewImage;
     GridImgHistoryAdapter gridImgsAdapter4history;
     GridImgAssayAdapter gridImgsAdapter4assay;
     private ArrayList<ArrayList<UploadGoodsBean>> img_uriArray = new ArrayList<ArrayList<UploadGoodsBean>>();
@@ -383,7 +384,9 @@ public class CheckCaseActivity extends BaseActivity {
                         PhotoModel photoModel = new PhotoModel();
                         //saveBitmapFile(mDataList.get(pos).historyListImgs.get(position));
                         //Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), mDataList.get(pos).historyListImgs.get(position), null,null));
-                        photoModel.setOriginalPath(saveBitmapFile(mDataList.get(pos).historyListImgs.get(position)));
+                        g_previewImage = mDataList.get(pos).historyListImgs.get(position);
+                        startPreviewActivity();
+                        /*photoModel.setOriginalPath(null);
                         photoModel.setChecked(true);
                         if(single_photos.size()==0) {
                             single_photos.add(photoModel);
@@ -391,7 +394,7 @@ public class CheckCaseActivity extends BaseActivity {
                         bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
-                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
+                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);*/
                     }
                 });
             }
@@ -493,7 +496,9 @@ public class CheckCaseActivity extends BaseActivity {
                         PhotoModel photoModel = new PhotoModel();
                         //saveBitmapFile(mDataList.get(pos).historyListImgs.get(position));
                         //Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), mDataList.get(pos).historyListImgs.get(position), null,null));
-                        photoModel.setOriginalPath(saveBitmapFile(mDataList.get(pos).assayListImgs.get(position)));
+                        g_previewImage = mDataList.get(pos).historyListImgs.get(position);
+                        startPreviewActivity();
+                        /*photoModel.setOriginalPath(saveBitmapFile(mDataList.get(pos).assayListImgs.get(position)));
                         photoModel.setChecked(true);
                         if(single_photos.size()==0) {
                             single_photos.add(photoModel);
@@ -501,7 +506,7 @@ public class CheckCaseActivity extends BaseActivity {
                         bundle.putSerializable("photos",(Serializable)single_photos);
                         bundle.putInt("position", position);
                         bundle.putString("save","save");
-                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);
+                        CommonUtils.launchActivity(CheckCaseActivity.this, PhotoPreviewActivity.class, bundle);*/
                     }
                 });
             }
@@ -556,6 +561,10 @@ public class CheckCaseActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void startPreviewActivity(){
+        mIntent = new Intent(CheckCaseActivity.this, PreviewActivity.class);
+        startActivityForResult(mIntent, PreviewActivity.REQ_CHANGE_PREVIEW);
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
