@@ -243,9 +243,6 @@ public class CheckCaseActivity extends BaseActivity {
             }else{
                 viewHolder.tv_historySignsInfo.setText("无");
             }
-            /*ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
-            img_uriItem.add(null);
-            img_uriArray.add(img_uriItem);*/
 
 
             gridImgsAdapter4history = new GridImgHistoryAdapter(listItem.historyListImgs,position);
