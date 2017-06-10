@@ -59,7 +59,9 @@ public class DBManager {
         db.execSQL("DELETE FROM Image WHERE _id IN (SELECT _id FROM Image WHERE imgId=? ORDER BY _id LIMIT ?,1)", new Object[]{imageId,pos});
         //db.delete("Image", "imgId = ?", new String[]{imageId});
         //db.execSQL("DELETE FROM Image WHERE imgId = ?", new Object[]{imageId});
-
+    }
+    public void updateAskCaseText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET historyRecount=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
     }
     public void addCaseRecount(CaseRecount caseRecount){
         db.beginTransaction();  //开始事务

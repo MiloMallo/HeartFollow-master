@@ -105,6 +105,15 @@ public class CheckCaseActivity extends BaseActivity {
                     //if(i==1){listItem.historyListImgs.add(bmp);}
                 }
             }
+            listItem.historyRecount=cursor.getString(cursor.getColumnIndex("historyRecount"));
+            listItem.historyCurCase=cursor.getString(cursor.getColumnIndex("historyCurCase"));
+            listItem.historyPastCase=cursor.getString(cursor.getColumnIndex("historyPastCase"));
+            listItem.historySigns=cursor.getString(cursor.getColumnIndex("historySigns"));
+
+            listItem.assayRecount=cursor.getString(cursor.getColumnIndex("assayRecount"));
+            listItem.imageRecount=cursor.getString(cursor.getColumnIndex("imageRecount"));
+            listItem.medicationRecount=cursor.getString(cursor.getColumnIndex("medicationRecount"));
+
             mDataList.add(listItem);
             if(imageId == null){
                 mImageId.add("#"+mContact.getAccount()+listItem.date);
@@ -128,7 +137,14 @@ public class CheckCaseActivity extends BaseActivity {
         public ArrayList<Bitmap> historyListImgs = new ArrayList<Bitmap>();
         public ArrayList<Bitmap> assayListImgs  = new ArrayList<Bitmap>();
         public String historyRecount;
-        public String AskedTitle;
+        public String historyCurCase;
+        public String historyPastCase;
+        public String historySigns;
+
+        public String assayRecount;
+        public String imageRecount;
+        public String medicationRecount;
+
         public Class<?> activity;
     }
     @Override
@@ -161,22 +177,7 @@ public class CheckCaseActivity extends BaseActivity {
         Display display = windowManager.getDefaultDisplay();
         screen_widthOffset = (display.getWidth() - (3* DbTOPxUtil.dip2px(this, 2)))/4;
         inflater = LayoutInflater.from(this);
-        /*DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-                .cacheInMemory(true).cacheOnDisc(true).build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-                getApplicationContext()).defaultDisplayImageOptions(
-                defaultOptions).build();
-        ImageLoader.getInstance().init(config);
-        Config.ScreenMap = Config.getScreenSize(this, this);
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        screen_widthOffset = (display.getWidth() - (3* DbTOPxUtil.dip2px(this, 2)))/4;
-        inflater = LayoutInflater.from(this);
-        my_imgs_GV = (MyGridView) findViewById(R.id.my_goods_history);
-        gridImgsAdapter = new GridImgAdapter();
-        my_imgs_GV.setAdapter(gridImgsAdapter);
-        img_uri.add(null);
-        gridImgsAdapter.notifyDataSetChanged();*/
+
     }
     private class CheckCaseAdapter extends RecyclerView.Adapter {
 
@@ -213,8 +214,35 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.tv_date.setText(listItem.date);
 
             l_position = position;
-
-
+            String info= mDataList.get(position).historyRecount;
+            int len = 0;
+            if(info!=null){
+                len = Math.min(info.length(),12);
+                viewHolder.tv_askedInfo.setText(mDataList.get(position).historyRecount.substring(0,len)+"...");
+            }else{
+                viewHolder.tv_askedInfo.setText("无");
+            }
+            info= mDataList.get(position).historyCurCase;
+            if(info!=null){
+                len = Math.min(info.length(),12);
+                viewHolder.tv_historyCurCaseInfo.setText(mDataList.get(position).historyCurCase.substring(0,len)+"...");
+            }else{
+                viewHolder.tv_historyCurCaseInfo.setText("无");
+            }
+            info= mDataList.get(position).historyPastCase;
+            if(info!=null){
+                len = Math.min(info.length(),12);
+                viewHolder.tv_historyPastCaseInfo.setText(mDataList.get(position).historyPastCase.substring(0,len)+"...");
+            }else{
+                viewHolder.tv_historyPastCaseInfo.setText("无");
+            }
+            info= mDataList.get(position).historySigns;
+            if(info!=null){
+                len = Math.min(info.length(),12);
+                viewHolder.tv_historySignsInfo.setText(mDataList.get(position).historySigns.substring(0,len)+"...");
+            }else{
+                viewHolder.tv_historySignsInfo.setText("无");
+            }
             /*ArrayList<UploadGoodsBean> img_uriItem = new ArrayList<UploadGoodsBean>();
             img_uriItem.add(null);
             img_uriArray.add(img_uriItem);*/
@@ -234,18 +262,6 @@ public class CheckCaseActivity extends BaseActivity {
             viewHolder.check_imgs_assay.setTag(position);
             viewHolder.check_imgs_assay.setAdapter(gridImgsAdapter4assay);
 
-            /*View convertView = inflater.inflate(R.layout.activity_addstory_img_item, null);
-            add_IB = (ImageView) convertView.findViewById(R.id.add_IB);
-            ImageView delete_IV = (ImageView) convertView.findViewById(R.id.delete_IV);
-            AbsListView.LayoutParams param = new AbsListView.LayoutParams(screen_widthOffset, screen_widthOffset);
-            convertView.setLayoutParams(param);
-            add_IB.setImageBitmap(listItem.historyListImgs.get(0));*/
-            //imgArrayCnt++;
-            //gridImgsAdapter4history.notifyDataSetChanged();
-
-            /*for(Bitmap image : listItem.historyListImgs){
-                viewHolder.iv_history.setImageBitmap(image);
-            }*/
         }
 
         @Override
@@ -259,6 +275,10 @@ public class CheckCaseActivity extends BaseActivity {
             private MyItemClickListener mListener;
             private MyGridView check_imgs_history;
             private MyGridView check_imgs_assay;
+
+            private TextView tv_historyCurCaseInfo;
+            private TextView tv_historyPastCaseInfo;
+            private TextView tv_historySignsInfo;
 
             public ViewHolder(View itemView,MyItemClickListener listener) {
                 super(itemView);
@@ -280,8 +300,43 @@ public class CheckCaseActivity extends BaseActivity {
                         mIntent.putExtra("textBody", textBody);
                         mIntent.putExtra("position", l_position);
                         startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
-                       /* ListItem listItem = mDataList.get(RecyclerViewUtils.getAdapterPosition(mRecyclerView, ViewHolder.this));
-                        startActivity(new Intent(CheckCaseActivity.this, listItem.activity));*/
+                    }
+                });
+
+                tv_historyCurCaseInfo = (TextView) itemView.findViewById(R.id.check_case_historyCurCaseInfo);
+                tv_historyCurCaseInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
+                        String textBody = mDataList.get(l_position).historyCurCase;
+                        mIntent.putExtra("textType",2 );
+                        mIntent.putExtra("textBody", textBody);
+                        mIntent.putExtra("position", l_position);
+                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
+                    }
+                });
+                tv_historyPastCaseInfo = (TextView) itemView.findViewById(R.id.check_case_historyPastCaseInfo);
+                tv_historyPastCaseInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
+                        String textBody = mDataList.get(l_position).historyPastCase;
+                        mIntent.putExtra("textType",3);
+                        mIntent.putExtra("textBody", textBody);
+                        mIntent.putExtra("position", l_position);
+                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
+                    }
+                });
+                tv_historySignsInfo = (TextView) itemView.findViewById(R.id.check_case_historySignsInfo);
+                tv_historySignsInfo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mIntent = new Intent(CheckCaseActivity.this, EditCheckCase.class);
+                        String textBody = mDataList.get(l_position).historySigns;
+                        mIntent.putExtra("textType",4);
+                        mIntent.putExtra("textBody", textBody);
+                        mIntent.putExtra("position", l_position);
+                        startActivityForResult(mIntent, EditCheckCase.REQ_CHANGE_EDIT_TEXT);
                     }
                 });
             }
@@ -528,10 +583,11 @@ public class CheckCaseActivity extends BaseActivity {
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int mPosition;
+        String mTextBody;
         switch (requestCode) {
             case 0:
-                int mTextType = data.getIntExtra("mTextType", 0);
-                if (data != null && mTextType==0) {
+                if (data != null) {
                     List<String> paths = (List<String>) data.getExtras().getSerializable("photos");
                     //int local_Channel = (int) data.getExtras().getSerializable("channel");
                     int local_Channel = data.getIntExtra("channel", 0);
@@ -556,14 +612,25 @@ public class CheckCaseActivity extends BaseActivity {
                     mgr.addImage(loadImage);
                     getImgItem(local_Channel,local_item).add(null);
                     mCheckCaseAdapter.notifyDataSetChanged();
-                }else{
-                    switch(mTextType){
+                }
+                break;
+            case 102:
+                if (data!= null) {
+                    mPosition = data.getIntExtra("position", 0);
+                    mTextBody = data.getStringExtra("textBody");
+                    mgr.updateAskCaseText(mContact.getAccount(),mPosition,mTextBody);
+                    switch(data.getIntExtra("textType", 0)){
                         case 1:
-                            int mPosition = data.getIntExtra("mPosition", 0);
-                            String mTextBody = data.getStringExtra("mTextBody");
-
+                            mDataList.get(mPosition).historyRecount = mTextBody;
                             break;
                         case 2:
+                            mDataList.get(mPosition).historyCurCase = mTextBody;
+                            break;
+                        case 3:
+                            mDataList.get(mPosition).historyPastCase = mTextBody;
+                            break;
+                        case 4:
+                            mDataList.get(mPosition).historySigns = mTextBody;
                             break;
                     }
                 }

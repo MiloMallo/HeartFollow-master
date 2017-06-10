@@ -53,17 +53,19 @@ public class EditCheckCase extends BaseActivity {
 
     @Override
     public void init() {
-        mEditText = (EditText)findViewById(R.id.check_case_text);
+
         mTextType = getIntent().getIntExtra("textType",0);
         mPosition = getIntent().getIntExtra("position", 0);
         mTextBody = getIntent().getStringExtra("textBody");
-        mEditText.setText(mTextBody);
+
     }
     @Override
     public void initView() {
         setContentView(R.layout.activity_check_case_edit);
         ButterKnife.inject(this);
         initToolbar();
+        mEditText = (EditText)findViewById(R.id.check_case_text);
+        mEditText.setText(mTextBody);
     }
     private void initToolbar() {
         setSupportActionBar(mToolbar);
@@ -90,7 +92,7 @@ public class EditCheckCase extends BaseActivity {
 
         Intent data = new Intent();
         data.putExtra("textType", mTextType);
-        data.putExtra("textBody", mTextBody);
+        data.putExtra("textBody", editText);
         data.putExtra("position", mPosition);
         setResult(RESULT_OK, data);
         finish();

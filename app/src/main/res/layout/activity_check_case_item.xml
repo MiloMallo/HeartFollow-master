@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="left"
-            android:text="    病史"
+            android:text="病史"
             android:textColor="#8a0919f5"
             android:background="#8a29f5de"
             android:textSize="20dp" />
@@ -71,7 +71,8 @@
         </LinearLayout>
 
         <View
-            android:layout_width="300dp"
+            android:layout_width="350dp"
+            android:layout_marginLeft="15dp"
             android:layout_height="0.66dp"
             android:background="#8A000000" />
 
@@ -87,9 +88,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_weight="1"
-                android:text="      主诉"
+                android:text="主诉"
                 android:textColor="@color/black0"
-                android:textSize="20sp"/>
+                android:textSize="15sp"/>
 
             <TextView
                 android:id="@+id/check_case_askedInfo"
@@ -98,12 +99,101 @@
                 android:layout_marginLeft="10dp"
                 android:layout_weight="4"
                 android:textColor="@color/gray1"
-                android:textSize="16sp"/>
+                android:textSize="15sp"/>
         </LinearLayout>
         <View
-            android:layout_width="300dp"
-            android:layout_height="0.66dp"
-            android:background="#8A000000" />
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:background="@drawable/question_divider"
+            android:layerType="software"
+            android:layout_height="2dp"/>
+        <LinearLayout
+            android:id="@+id/check_case_historyCurCaseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="现病史"
+                android:textColor="@color/black0"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/check_case_historyCurCaseInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="15sp"/>
+        </LinearLayout>
+        <View
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:background="@drawable/question_divider"
+            android:layerType="software"
+            android:layout_height="2dp"/>
+        <LinearLayout
+            android:id="@+id/check_case_historyPastCaseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="既往史"
+                android:textColor="@color/black0"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/check_case_historyPastCaseInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="15sp"/>
+        </LinearLayout>
+        <View
+            android:layout_marginLeft="15dp"
+            android:layout_width="match_parent"
+            android:background="@drawable/question_divider"
+            android:layerType="software"
+            android:layout_height="2dp"/>
+        <LinearLayout
+            android:id="@+id/check_case_historySignsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="体征"
+                android:textColor="@color/black0"
+                android:textSize="15sp"/>
+
+            <TextView
+                android:id="@+id/check_case_historySignsInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="15sp"/>
+        </LinearLayout>
 
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -117,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="left"
-            android:text="    化验"
+            android:text="化验"
             android:textColor="#8a0919f5"
             android:background="#8a29f5de"
             android:textSize="20dp" />
@@ -146,7 +236,8 @@
         </LinearLayout>
 
         <View
-            android:layout_width="300dp"
+            android:layout_width="350dp"
+            android:layout_marginLeft="10dp"
             android:layout_height="0.66dp"
             android:background="#8A000000" />
 
@@ -162,8 +253,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:layout_weight="1"
-                android:text="      无"
-                android:textColor="@color/black0"
+                android:text="无"
+                android:textColor="@color/gray1"
                 android:textSize="20sp"/>
 
             <TextView
@@ -175,8 +266,156 @@
                 android:textColor="@color/gray1"
                 android:textSize="16sp"/>
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/check_case_image"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="left"
+            android:text="影像"
+            android:textColor="#8a0919f5"
+            android:background="#8a29f5de"
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/add_images_image"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:scaleType="fitXY" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:descendantFocusability="blocksDescendants">
+            <com.lqr.wechat.view.MyGridView
+                android:id="@+id/check_images_image"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:numColumns="4" />
+        </LinearLayout>
+
         <View
-            android:layout_width="300dp"
+            android:layout_width="350dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="0.66dp"
+            android:background="#8A000000" />
+
+        <LinearLayout
+            android:id="@+id/check_case_askedTitle_image"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="无"
+                android:textColor="@color/gray1"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/check_case_askedInfo_image"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        <View
+            android:layout_width="350dp"
+            android:layout_height="0.66dp"
+            android:background="#8A000000" />
+
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/check_case_medication"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="left"
+            android:text="用药"
+            android:textColor="#8a0919f5"
+            android:background="#8a29f5de"
+            android:textSize="20dp" />
+        <ImageView
+            android:id="@+id/add_images_medication"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:scaleType="fitXY" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:descendantFocusability="blocksDescendants">
+            <com.lqr.wechat.view.MyGridView
+                android:id="@+id/check_images_medication"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:gravity="center"
+                android:numColumns="4" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="350dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="0.66dp"
+            android:background="#8A000000" />
+
+        <LinearLayout
+            android:id="@+id/check_case_askedTitle_medication"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/selector_option_item"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="1"
+                android:text="无"
+                android:textColor="@color/gray1"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/check_case_askedInfo_medication"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="4"
+                android:textColor="@color/gray1"
+                android:textSize="16sp"/>
+        </LinearLayout>
+        <View
+            android:layout_width="350dp"
             android:layout_height="0.66dp"
             android:background="#8A000000" />
 
