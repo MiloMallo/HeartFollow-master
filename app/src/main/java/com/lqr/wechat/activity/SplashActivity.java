@@ -56,7 +56,7 @@ public class SplashActivity extends BaseActivity {
     public boolean canAutoLogin() {
         String account = NimAccountSDK.getUserAccount();
         String token = NimAccountSDK.getUserAccount();
-        return true;//!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token);
+        return !TextUtils.isEmpty(account) && !TextUtils.isEmpty(token);
     }
 
 }

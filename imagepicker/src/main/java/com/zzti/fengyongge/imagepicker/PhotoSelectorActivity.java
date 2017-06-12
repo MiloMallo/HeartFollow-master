@@ -44,8 +44,7 @@ import java.util.List;
  * Created by fengyongge on 2016/5/24
  * 图片选择
  */
-public class PhotoSelectorActivity extends Activity implements SelectPhotoItem.onItemClickListener, SelectPhotoItem.onPhotoItemCheckedListener,
-		OnItemClickListener, OnClickListener {
+public class PhotoSelectorActivity extends Activity implements SelectPhotoItem.onItemClickListener, SelectPhotoItem.onPhotoItemCheckedListener,OnItemClickListener, OnClickListener {
 	public static final String RECCENT_PHOTO = "最近照片";
 	private List<PhotoModel> single_photos = new ArrayList<PhotoModel>();
 	private GridView gvPhotos;
