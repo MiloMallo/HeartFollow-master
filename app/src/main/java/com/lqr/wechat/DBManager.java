@@ -60,8 +60,26 @@ public class DBManager {
         //db.delete("Image", "imgId = ?", new String[]{imageId});
         //db.execSQL("DELETE FROM Image WHERE imgId = ?", new Object[]{imageId});
     }
-    public void updateAskCaseText(String recount,int position,String textBody){
+    public void updateHistoryRecountText(String recount,int position,String textBody){
         db.execSQL("UPDATE CaseRecount SET historyRecount=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateHistoryCurCaseText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET historyCurCase=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateHistoryPastCaseText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET historyPastCase=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateHistorySignsText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET historySigns=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateAssayRecountText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET assayRecount=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateImageRecountText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET imageRecount=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
+    }
+    public void updateMedicationRecountText(String recount,int position,String textBody){
+        db.execSQL("UPDATE CaseRecount SET medicationRecount=? WHERE _id IN (SELECT _id FROM CaseRecount WHERE userAccount=? ORDER BY _id LIMIT ?,1)", new Object[]{textBody,recount,position});
     }
     public void addCaseRecount(CaseRecount caseRecount){
         db.beginTransaction();  //开始事务
