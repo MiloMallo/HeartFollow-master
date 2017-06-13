@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -25,6 +26,7 @@ import com.lqr.wechat.model.Image;
 import com.lqr.wechat.model.UploadGoodsBean;
 import com.lqr.wechat.utils.Config;
 import com.lqr.wechat.utils.DbTOPxUtil;
+import com.lqr.wechat.utils.UIUtils;
 import com.lqr.wechat.view.MyGridView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -76,10 +78,6 @@ public class AddCaseActivity extends BaseActivity {
     Toolbar mToolbar;
     @InjectView(R.id.btnOk)
     Button mBtnOk;
-    @InjectView(R.id.btnLoad)
-    Button mBtnLoad;
-    private ImageView imgView;
-
 
     private DBManager mgr;
 
@@ -513,12 +511,21 @@ public class AddCaseActivity extends BaseActivity {
     }
     private void initToolbar() {
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("备注信息");
+        getSupportActionBar().setTitle("添加病例");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mToolbar.setNavigationIcon(R.mipmap.ic_back);
         mBtnOk.setVisibility(View.VISIBLE);
     }
-    @OnClick({R.id.btnOk,R.id.btnLoad})
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @OnClick({R.id.btnOk})
     public void click(View view) {
         switch (view.getId()) {
             case R.id.btnOk:
@@ -546,17 +553,9 @@ public class AddCaseActivity extends BaseActivity {
                 CaseRecount caseRecount = new CaseRecount(mContact.getAccount(),dateNowStr,rand,null,null,null,null,null,null,null);
                 mgr.addCaseRecount(caseRecount);
                 mgr.addImage(images);
-                break;
-            case R.id.btnLoad:
-                imgView = (ImageView) findViewById(R.id.imgView);
-                Cursor c = mgr.queryAllImageCursor();
-                c.moveToLast();
-                if (c.isLast()) {
-                    //String myImg = c.getString(c.getColumnIndex("imgId"));
-                    Bitmap bmp = cursorToBmp(c, c.getColumnIndex("img"));
-                    imgView.setImageBitmap(bmp);
-                }
-                c.close();
+                UIUtils.showToast("添加病例成功");
+                hideWaitingDialog();
+                finish();
                 break;
         }
     }
