@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 
 /**
- * @创建者 CSDN_LQR
  * @描述 自定义Application类
  */
 public class App extends Application {
