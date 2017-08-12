@@ -56,8 +56,7 @@
         android:theme="@style/AppTheme">
 
         <!--###############################网易云信配置 begin###############################-->
-        <!-- APP key, 可以在这里设置，也可以在 SDKOptions 中提供。
-            如果 SDKOptions 中提供了，取 SDKOptions 中的值。 -->
+
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="ef58c5231e34113fbfff2b559a49a129"/>
